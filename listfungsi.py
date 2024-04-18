@@ -828,3 +828,360 @@ def get_formasi(data, data2):
   fixdata = fixdata[['Gameweek', 'Team', 'Match', 'Formation']]
 
   return fixdata
+
+def get_pct(data, data2, min, komp):
+  df = data.copy()
+  db = data2.copy()
+  df['Shots'] = df['Shot on']+df['Shot off']+df['Shot Blocked']
+  df['Goals'] = df['Penalty Goal']+df['Goal']
+  df['Total Pass'] = df['Pass']+df['Pass Fail']
+  df['Saves'] = df['Save']+df['Penalty Save']
+  df['Blocks'] = df['Block']+df['Block Cross']
+  df['Aerial Duels'] = df['Aerial Won']+df['Aerial Lost']
+  df['Crosses'] = df['Cross']+df['Cross Fail']
+
+  df_data = df[['Name','Team','Kompetisi','MoP','Goals','Shots','Shot on',
+                'Create Chance','Assist','Pass','Total Pass',
+                'Pass - Progressive Pass', 'Pass - Through Pass',
+                'Cross','Dribble','Tackle','Intercept','Recovery','Blocks',
+                'Aerial Duels','Aerial Won','Saves','Shots on Target Faced',
+                'Penalty Save','Keeper - Sweeper','Cross Claim','Goal Kick',
+                'Goal Kick - Goal Kick Launch', 'Crosses']]
+  df_sum = df_data.groupby(['Name','Team','Kompetisi'], as_index=False).sum()
+  df_sum['Conversion Ratio'] = round(df_sum['Goals']/df_sum['Shots'],2)
+  df_sum['Shot on Target Ratio'] = round(df_sum['Shot on']/df_sum['Shots'],2)
+  df_sum['Successful Cross Ratio'] = round(df_sum['Cross']/df_sum['Crosses'],2)
+  df_sum['Pass per Shot'] = round(df_sum['Total Pass']/df_sum['Shots'],2)
+  df_sum['Pass Accuracy'] = round(df_sum['Pass']/df_sum['Total Pass'],2)
+  df_sum['Aerial Won Ratio'] = round(df_sum['Aerial Won']/df_sum['Aerial Duels'],2)
+  df_sum['Save Ratio'] = round(df_sum['Saves']/df_sum['Shots on Target Faced'],2)
+  df_sum['Long Goal Kick Ratio'] = round(df_sum['Goal Kick - Goal Kick Launch']/df_sum['Goal Kick'],2)
+  df_sum.replace([np.inf, -np.inf], 0, inplace=True)
+  df_sum.fillna(0, inplace=True)
+
+  temp = df_sum.drop(['Name','Team','Kompetisi'], axis=1)
+
+  def p90_Calculator(variable_value):
+    p90_value = round((((variable_value/temp['MoP']))*90),2)
+    return p90_value
+  p90 = temp.apply(p90_Calculator)
+
+  p90['Name'] = df_sum['Name']
+  p90['Team'] = df_sum['Team']
+  p90['Kompetisi'] = df_sum['Kompetisi']
+  p90['MoP'] = df_sum['MoP']
+  p90['Conversion Ratio'] = df_sum['Conversion Ratio']
+  p90['Shot on Target Ratio'] = df_sum['Shot on Target Ratio']
+  p90['Successful Cross Ratio'] = df_sum['Successful Cross Ratio']
+  p90['Pass per Shot'] = df_sum['Pass per Shot']
+  p90['Pass Accuracy'] = df_sum['Pass Accuracy']
+  p90['Aerial Won Ratio'] = df_sum['Aerial Won Ratio']
+  p90['Save Ratio'] = df_sum['Save Ratio']
+  p90['Long Goal Kick Ratio'] = df_sum['Long Goal Kick Ratio']
+
+  pos = db[['Name','Position']]
+  data_full = pd.merge(pos, p90, on='Name', how='left')
+  data_full = data_full.loc[(data_full['MoP']>=min)].reset_index(drop=True)
+
+  temp_full = data_full.copy()
+  temp_full = temp_full[temp_full['Kompetisi']==komp]
+  df4 = temp_full.groupby('Position', as_index=False)
+  midfielder = df4.get_group('Midfielder')
+  goalkeeper = df4.get_group('Goalkeeper')
+  forward = df4.get_group('Forward')
+  att_10 = df4.get_group('Attacking 10')
+  center_back = df4.get_group('Center Back')
+  fullback = df4.get_group('Fullback')
+  winger = df4.get_group('Winger')
+
+  #calculating the average stats per position
+  #winger
+  temp = winger.copy()
+  winger = winger.drop(['Name','Position','Team','Kompetisi'], axis=1)
+  winger.loc['mean'] = round((winger.mean()),2)
+  winger['Name'] = temp['Name']
+  winger['Position'] = temp['Position']
+  winger['Team'] = temp['Team']
+  winger['Kompetisi'] = temp['Kompetisi']
+  values1 = {"Name": 'Average W', "Position": 'Winger', "Team": 'League Average', "Kompetisi": komp}
+  winger = winger.fillna(value=values1)
+
+  #fb
+  temp = fullback.copy()
+  fullback = fullback.drop(['Name','Position','Team','Kompetisi'], axis=1)
+  fullback.loc['mean'] = round((fullback.mean()),2)
+  fullback['Name'] = temp['Name']
+  fullback['Position'] = temp['Position']
+  fullback['Team'] = temp['Team']
+  fullback['Kompetisi'] = temp['Kompetisi']
+  values2 = {"Name": 'Average FB', "Position": 'Fullback', "Team": 'League Average', "Kompetisi": komp}
+  fullback = fullback.fillna(value=values2)
+
+  #cb
+  temp = center_back.copy()
+  center_back = center_back.drop(['Name','Position','Team','Kompetisi'], axis=1)
+  center_back.loc['mean'] = round((center_back.mean()),2)
+  center_back['Name'] = temp['Name']
+  center_back['Position'] = temp['Position']
+  center_back['Team'] = temp['Team']
+  center_back['Kompetisi'] = temp['Kompetisi']
+  values3 = {"Name": 'Average CB', "Position": 'Center Back', "Team": 'League Average', "Kompetisi": komp}
+  center_back = center_back.fillna(value=values3)
+
+  #cam
+  temp = att_10.copy()
+  att_10 = att_10.drop(['Name','Position','Team','Kompetisi'], axis=1)
+  att_10.loc['mean'] = round((att_10.mean()),2)
+  att_10['Name'] = temp['Name']
+  att_10['Position'] = temp['Position']
+  att_10['Team'] = temp['Team']
+  att_10['Kompetisi'] = temp['Kompetisi']
+  values4 = {"Name": 'Average CAM', "Position": 'Attacking 10', "Team": 'League Average', "Kompetisi": komp}
+  att_10 = att_10.fillna(value=values4)
+
+  #forward
+  temp = forward.copy()
+  forward = forward.drop(['Name','Position','Team','Kompetisi'], axis=1)
+  forward.loc['mean'] = round((forward.mean()),2)
+  forward['Name'] = temp['Name']
+  forward['Position'] = temp['Position']
+  forward['Team'] = temp['Team']
+  forward['Kompetisi'] = temp['Kompetisi']
+  values5 = {"Name": 'Average FW', "Position": 'Forward', "Team": 'League Average', "Kompetisi": komp}
+  forward = forward.fillna(value=values5)
+
+  #gk
+  temp = goalkeeper.copy()
+  goalkeeper = goalkeeper.drop(['Name','Position','Team','Kompetisi'], axis=1)
+  goalkeeper.loc['mean'] = round((goalkeeper.mean()),2)
+  goalkeeper['Name'] = temp['Name']
+  goalkeeper['Position'] = temp['Position']
+  goalkeeper['Team'] = temp['Team']
+  goalkeeper['Kompetisi'] = temp['Kompetisi']
+  values6 = {"Name": 'Average GK', "Position": 'Goalkeeper', "Team": 'League Average', "Kompetisi": komp}
+  goalkeeper = goalkeeper.fillna(value=values6)
+
+  #cm
+  temp = midfielder.copy()
+  midfielder = midfielder.drop(['Name','Position','Team','Kompetisi'], axis=1)
+  midfielder.loc['mean'] = round((midfielder.mean()),2)
+  midfielder['Name'] = temp['Name']
+  midfielder['Position'] = temp['Position']
+  midfielder['Team'] = temp['Team']
+  midfielder['Kompetisi'] = temp['Kompetisi']
+  values7 = {"Name": 'Average CM', "Position": 'Midfielder', "Team": 'League Average', "Kompetisi": komp}
+  midfielder = midfielder.fillna(value=values7)
+
+  #percentile rank
+  rank_cm = round(((midfielder.rank(pct=True))*100),2)
+  rank_gk = round(((goalkeeper.rank(pct=True))*100),2)
+  rank_fw = round(((forward.rank(pct=True))*100),2)
+  rank_cam = round(((att_10.rank(pct=True))*100),2)
+  rank_cb = round(((center_back.rank(pct=True))*100),2)
+  rank_fb = round(((fullback.rank(pct=True))*100),2)
+  rank_w = round(((winger.rank(pct=True))*100),2)
+
+  #adding Name and Position back
+  rank_cm['Name'] = midfielder['Name']
+  rank_gk['Name'] = goalkeeper['Name']
+  rank_fw['Name'] = forward['Name']
+  rank_cam['Name'] = att_10['Name']
+  rank_cb['Name'] = center_back['Name']
+  rank_fb['Name'] = fullback['Name']
+  rank_w['Name'] = winger['Name']
+
+  rank_cm['Position'] = midfielder['Position']
+  rank_gk['Position'] = goalkeeper['Position']
+  rank_fw['Position'] = forward['Position']
+  rank_cam['Position'] = att_10['Position']
+  rank_cb['Position'] = center_back['Position']
+  rank_fb['Position'] = fullback['Position']
+  rank_w['Position'] = winger['Position']
+
+  rank_cm['Team'] = midfielder['Team']
+  rank_gk['Team'] = goalkeeper['Team']
+  rank_fw['Team'] = forward['Team']
+  rank_cam['Team'] = att_10['Team']
+  rank_cb['Team'] = center_back['Team']
+  rank_fb['Team'] = fullback['Team']
+  rank_w['Team'] = winger['Team']
+
+  rank_cm['Kompetisi'] = midfielder['Kompetisi']
+  rank_gk['Kompetisi'] = goalkeeper['Kompetisi']
+  rank_fw['Kompetisi'] = forward['Kompetisi']
+  rank_cam['Kompetisi'] = att_10['Kompetisi']
+  rank_cb['Kompetisi'] = center_back['Kompetisi']
+  rank_fb['Kompetisi'] = fullback['Kompetisi']
+  rank_w['Kompetisi'] = winger['Kompetisi']
+
+  rank_cm['MoP'] = midfielder['MoP']
+  rank_gk['MoP'] = goalkeeper['MoP']
+  rank_fw['MoP'] = forward['MoP']
+  rank_cam['MoP'] = att_10['MoP']
+  rank_cb['MoP'] = center_back['MoP']
+  rank_fb['MoP'] = fullback['MoP']
+  rank_w['MoP'] = winger['MoP']
+
+  rank_liga = pd.concat([rank_cm, rank_gk, rank_fw, rank_cam, rank_cb, rank_fb, rank_w]).reset_index(drop=True)
+  rank_liga['MoP'] = rank_liga['MoP'].astype(int)
+
+  return data_full, df_sum, rank_liga
+
+def get_radar(data1, data2, data3, pos, player):
+  df1 = data1.copy()
+  df2 = data2.copy()
+  df3 = data3.copy()
+
+  if (pos=='Forward'):
+    temp1 = df1[posdict['fw']['metrics']]
+    temp2 = df2[posdict['fw']['metrics']]
+    temp3 = df3[posdict['fw']['metrics']]
+  elif (pos=='Winger') or (pos=='Attacking 10'):
+    temp1 = df1[posdict['cam/w']['metrics']]
+    temp2 = df2[posdict['cam/w']['metrics']]
+    temp3 = df3[posdict['cam/w']['metrics']]
+  elif (pos=='Midfielder'):
+    temp1 = df1[posdict['cm']['metrics']]
+    temp2 = df2[posdict['cm']['metrics']]
+    temp3 = df3[posdict['cm']['metrics']]
+  elif (pos=='Fullback'):
+    temp1 = df1[posdict['fb']['metrics']]
+    temp2 = df2[posdict['fb']['metrics']]
+    temp3 = df3[posdict['fb']['metrics']]
+  elif (pos=='Center Back'):
+    temp1 = df1[posdict['cb']['metrics']]
+    temp2 = df2[posdict['cb']['metrics']]
+    temp3 = df3[posdict['cb']['metrics']]
+  elif (pos=='Goalkeeper'):
+    temp1 = df1[posdict['gk']['metrics']]
+    temp2 = df2[posdict['gk']['metrics']]
+    temp3 = df3[posdict['gk']['metrics']]
+
+  auxdata1 = temp1[temp1['Name']==player]
+  auxdata2 = temp2[temp2['Name']==player]
+  auxdata3 = temp3[temp3['Name']==player]
+  auxt1 = auxdata1.transpose().reset_index()
+  auxt2 = auxdata2.transpose().reset_index()
+  auxt3 = auxdata3.transpose().reset_index()
+
+  new_header = auxt1.iloc[0]
+  auxt1 = auxt1[2:].reset_index(drop=True)
+  auxt1.columns = new_header
+  auxt1 = auxt1.reset_index(drop=True).rename(columns={'Name':'Metrics',
+                                                       player:'Percentile'})
+  auxt2 = auxt2[2:].reset_index(drop=True)
+  auxt2.columns = new_header
+  auxt2 = auxt2.reset_index(drop=True).rename(columns={'Name':'Metrics',
+                                                       player:'per 90'})
+
+  auxt3 = auxt3[2:].reset_index(drop=True)
+  auxt3.columns = new_header
+  auxt3 = auxt3.reset_index(drop=True).rename(columns={'Name':'Metrics',
+                                                       player:'Total'})
+
+  auxt4 = pd.merge(auxt3, auxt2, on='Metrics', how='left')
+  auxt = pd.merge(auxt4, auxt1, on='Metrics', how='left')
+  return auxt
+
+def get_simi(data, data2, player, pos):
+  df = data.copy()
+  df = df[df['Position']==pos]
+  db = data2.copy()
+  
+  if (pos=='Forward'):
+    temp = df[posdict['fw']['metrics']].reset_index(drop=True)
+  elif (pos=='Winger') or (pos=='Attacking 10'):
+    temp = df[posdict['cam/w']['metrics']].reset_index(drop=True)
+  elif (pos=='Midfielder'):
+    temp = df[posdict['cm']['metrics']].reset_index(drop=True)
+  elif (pos=='Fullback'):
+    temp = df[posdict['fb']['metrics']].reset_index(drop=True)
+  elif (pos=='Center Back'):
+    temp = df[posdict['cb']['metrics']].reset_index(drop=True)
+  elif (pos=='Goalkeeper'):
+    temp = df[posdict['gk']['metrics']].reset_index(drop=True)
+
+  dfx = temp.drop(['Name'], axis=1)
+
+  def create_scaler_model():
+    return StandardScaler()
+
+  scaler = create_scaler_model()
+  scaler.fit(dfx)
+  scaled_features = scaler.transform(dfx)
+  scaled_feat_df = pd.DataFrame(scaled_features)
+
+  X = np.array(scaled_feat_df)
+  calc_k_model = KMeans()
+  visualizer = KElbowVisualizer(calc_k_model, k=(1,10), timings= True)
+  visualizer.fit(X)
+
+  kmeans = KMeans(n_clusters=visualizer.elbow_value_)
+  kmeans.fit(X)
+
+  scaled_feat_df['cluster'] = kmeans.predict(X)
+  scaled_feat_df.insert(0, 'Name', temp['Name'])
+  
+  df_fin = scaled_feat_df.copy()
+  clus = df_fin[df_fin['Name'] == player]['cluster']
+
+  df_fin = df_fin[df_fin['cluster'] == int(clus)]
+  df_fin.reset_index(inplace=True)
+  df_fin.drop(['index'],axis=1,inplace=True)
+  
+  player_list = df_fin[df_fin['Name'] == player].values.tolist()
+  others_list = df_fin[df_fin['Name'] != player].values.tolist()
+
+  ind = df_fin[df_fin['Name'] == player_list[0][0]].index[0]
+  df_fin['Similarity Score'] = ''
+
+  df_fin['Similarity Score'][ind] = 0
+
+  for elem in others_list:
+    sim_score = 0
+  #Calculate similarity score using Euclidian distance
+    for i in range(1,len(player_list[0])-1):
+      sim_score += pow(player_list[0][i] - elem[i],2)
+    sim_score = math.sqrt(sim_score)
+    ind = df_fin[df_fin['Name'] == elem[0]].index
+    df_fin['Similarity Score'][ind] = sim_score
+  df_fin = df_fin.sort_values('Similarity Score').reset_index(drop=True)
+  df_fin = df_fin.iloc[1:, :].reset_index(drop=True)
+  df_fin = df_fin[['Name', 'Similarity Score']]
+
+  import datetime as dt
+  from datetime import date
+
+  today = date.today()
+  db['Age'] = db['DoB'].apply(lambda x: today.year - x.year - ((today.month, today.day) < (x.month, x.day)))
+
+  df_fix = pd.merge(df_fin, db, on='Name', how='left')
+  df_fix = pd.merge(df_fix, df, on='Name', how='left')
+  df_fix = df_fix[['Name', 'Nickname', 'Team', 'MoP', 'Age', 'Nationality', 'Similarity Score']]
+  df_fix['MoP'] = df_fix['MoP'].astype(int)
+
+  return df_fix
+
+def get_playerlist(data, komp, pos, mins, nat, age, arr_met):
+  df = data.copy()
+
+  ag_list = age
+  nt_list = nat
+  kp_list = komp
+
+  df = df[df['Kompetisi'].isin(kp_list)]
+  df = df[df['Nat. Status'].isin(nt_list)]
+  df = df[df['Age Group'].isin(ag_list)]
+  df = df[df['MoP']>=mins]
+  df = df[df['Position']==pos].reset_index(drop=True)
+
+  metrik = arr_met
+  data = df[metrik]
+  data['mean'] = round(data.mean(axis=1),2)
+  data.insert(0, column='Name', value=df['Name'])
+  data.insert(1, column='Team', value=df['Team'])
+  data.insert(2, column='MoP', value=df['MoP'])
+
+  data = data.sort_values(by=['mean'], ascending=False).reset_index(drop=True)
+  
+  return data
