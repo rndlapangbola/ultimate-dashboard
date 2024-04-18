@@ -1,1 +1,30 @@
+import sys
+import io
+import streamlit as st
+import pandas as pd
+import numpy as np
+from tempfile import NamedTemporaryFile
+import urllib
 
+from listfungsi import get_detail
+from listfungsi import get_pct
+
+db_temp = get_detail(df2)
+db_temp2 = db_temp[['Name','Age Group','Nat. Status']]
+temple = pd.merge(rank_pct, db_temp2, on='Name', how='left')
+templist = rank_pct.drop(['Name','Position','Team','MoP','Kompetisi'], axis=1)
+metlist = list(templist)
+col1, col2, col3 = st.columns(3)
+with col1:
+  pos = st.selectbox('Select Position', pd.unique(temple['Position']), key='87')
+  komp = st.multiselect('Select Competition', ['Liga 1', 'Liga 2'], key='89')
+with col2:
+  nats = st.multiselect('Select Nat. Status', ['Foreign', 'Local'], key='86')
+  ages = st.multiselect('Select Age Groups', ['Senior', 'U23'], key='88')
+with col3:
+  mins = st.number_input('Input minimum mins. played', min_value=90,
+                         max_value=3060, step=90, key=85)
+  arr_met = st.multiselect('Select Metrics', metlist, key='84')
+            
+playlist = get_playerlist(temple, komp, pos, mins, nats, ages, arr_met)
+st.dataframe(playlist.head(10))
