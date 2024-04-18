@@ -9,6 +9,19 @@ import urllib
 from listfungsi import get_detail
 from listfungsi import get_pct
 
+st.set_page_config(page_title='Player Search', layout='wide')
+st.markdown('# Search')
+
+@st.cache_data(ttl=600)
+def load_data(sheets_url):
+    xlsx_url = sheets_url.replace("/edit#gid=", "/export?format=xlsx&gid=")
+    return pd.read_excel(xlsx_url)
+
+df1 = load_data(st.secrets["datateam"])
+df2 = load_data(st.secrets["datapemain"])
+
+
+
 db_temp = get_detail(df2)
 db_temp2 = db_temp[['Name','Age Group','Nat. Status']]
 temple = pd.merge(rank_pct, db_temp2, on='Name', how='left')
