@@ -23,6 +23,7 @@ def run():
         - **Plotting xG**: Untuk plotting xG map dan assist/key pass map.
         - **Plotting Passing Network**: Untuk plotting passing network.
         - **Excel-to-XML Converter**: Untuk mengkonversi file timeline (.xlsx) ke format XML untuk video tagging.
+        - ***Coming Soon***
         
         ### Terima kasih kepada:
         - Kang Dani dan Dzikry,
