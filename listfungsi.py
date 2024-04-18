@@ -463,3 +463,367 @@ def data_player(data, komp, team, pos, month, venue, gw, age, nat, metrik, mins,
     return data90
   elif (cat=='Total'):
     return datafull
+
+def get_pssw(data, data2, team, gw):
+  df = data.copy()
+  #df['Gameweek'] = df['Gameweek'].astype(str)
+  th = data2.copy()
+  gw_list = gw
+  df = df[df['Team']==team]
+  df = df[df['Gameweek'].isin(gw_list)]
+
+  df_rel = df[['Gameweek','Match','Team','Opponent','Shot off','Shot on','Shot Blocked',
+               'Shot off - Inside Box','Shot off - Outside Box','Shot on - Inside Box',
+               'Shot on - Outside Box','Ball Possession','Foul','Tackle Fail','Tackle',
+               'Pass','Pass Fail','Dribble Fail','Loose Ball','Touch','Goal','Offside',
+               'Intercept','Recovery','Aerial Won','Aerial Lost','Pass - Long Ball',
+               'Pass - Short Pass','Fouled','Cross','Cross Fail','Cross Blocked','Penalty Goal']]
+  
+  dfx = df_rel.drop(['Opponent'], axis=1)
+  dfx['Shots'] = dfx['Shot on'] + dfx['Shot off'] + dfx['Shot Blocked']
+  dfx['Goals'] = dfx['Goal'] + dfx['Penalty Goal']
+  df1 = dfx.groupby(['Gameweek','Match','Team'], as_index=False).sum()
+
+  df3 = df_rel.drop(['Match','Opponent'], axis=1)
+  df3 = df3.groupby(['Gameweek','Team'], as_index=False).sum()
+
+  df4 = df_rel.drop(['Match','Team'], axis=1)
+  df4 = df4.groupby(['Gameweek','Opponent'], as_index=False).sum()
+
+  df_x = dfx.groupby(['Gameweek','Match'], as_index=False)['Ball Possession'].max()
+  df_y = dfx.groupby(['Gameweek','Match'], as_index=False)['Ball Possession'].min()
+  df_z = pd.merge(df_x, df_y, how='left', on=['Gameweek','Match'])
+
+  df2 = pd.DataFrame()
+  df2['Gameweek'] = df1['Gameweek']
+  df2['Match'] = df1['Match']
+  df2['Team'] = df1['Team']
+
+  df2['PS_Att - Shot-Inside'] = df1['Shot off - Inside Box']+df1['Shot on - Inside Box']
+  df2['PS_Att - Shot-Outside'] = df1['Shot off - Outside Box']+df1['Shot on - Outside Box']
+  df2['PS_Att - Shot-Freq'] = df1['Shot off']+df1['Shot on']+df1['Shot Blocked']
+  df2['PS_Att - Cross-Freq'] = round(((df1['Cross']+df1['Cross Fail']+df1['Cross Blocked'])/df1['Touch']),2)
+  df2['PS_Att - Long Pass/Short Pass'] = df1['Pass - Long Ball']/df1['Pass - Short Pass']
+  df2['PS_Deff - Agg.'] = df1['Foul']+df1['Tackle']+df1['Tackle Fail']
+
+  df2['SW_Att - Offside'] = df1['Offside']/df1['Touch']
+  df2['SW_Att - Poss-Eff.'] = round(((df1['Pass']+df1['Pass Fail'])/df2['PS_Att - Shot-Freq']),2)
+  df2['SW_Att - Poss-RTT.'] = round(((df1['Loose Ball']+df1['Pass Fail']+df1['Dribble Fail'])/df1['Touch']),2)
+  #df2['SW_Att - Fin.'] = abs(df1['Goals'].mean()-df1['Goals'])+abs(df1['Shots'].mean()-df1['Shots'])
+  df2['SW_Att - Fin.'] = round((df1['Goals']/df2['PS_Att - Shot-Freq']),2)
+  df2['SW_Deff - Regain'] = round(((df1['Intercept']+df1['Tackle']+df1['Recovery'])/df4['Touch']),2)
+  df2['SW_Deff - Aerial'] = round((df1['Aerial Won']/(df1['Aerial Won']+df1['Aerial Lost'])),2)
+  df2['SW_Deff - Tackle'] = round((df1['Tackle']/(df1['Tackle']+df1['Tackle Fail'])),2)
+
+  df2.fillna(0, inplace=True)
+
+  dfx = df_rel.drop(['Team','Opponent'], axis=1)
+  df1 = dfx.groupby(['Gameweek','Match'], as_index=False).sum()
+
+  df3 = df_rel.drop(['Match','Opponent'], axis=1)
+  df3 = df3.groupby(['Gameweek','Team'], as_index=False).sum()
+
+  df4 = df_rel.drop(['Match','Team'], axis=1)
+  df4 = df4.groupby(['Gameweek','Opponent'], as_index=False).sum()
+
+  df_x = dfx.groupby(['Gameweek','Match'], as_index=False)['Ball Possession'].max()
+  df_y = dfx.groupby(['Gameweek','Match'], as_index=False)['Ball Possession'].min()
+  df_z = pd.merge(df_x, df_y, how='left', on=['Gameweek','Match'])
+
+  df23 = pd.DataFrame()
+
+  df23['Gameweek'] = df1['Gameweek']
+  df23['Match'] = df1['Match']
+  df23['PS_Poss - Poss-Dom.'] = df_z['Ball Possession_x']-df_z['Ball Possession_y']
+
+  dfk = pd.concat([df23, df2], ignore_index=True)
+  dfk.replace([np.inf, -np.inf], 0, inplace=True)
+  dfk.fillna(0, inplace=True)
+
+  dfk = dfk.drop(['Gameweek','Match'], axis=1).groupby(['Team'], as_index=False).sum()
+  tmp = dfk.drop('Team', axis=1)
+  tmp = tmp/len(gw_list)
+  tmp['Team'] = dfk['Team']
+  tmp = tmp[tmp['Team']==team].reset_index(drop=True)
+
+  ts = tmp.copy()
+  def pstyle(row):  
+    if row['PS_Att - Shot-Inside'] > th.iloc[0]['upper'] and row['PS_Att - Shot-Outside'] < th.iloc[1]['under']:
+        return 'Work ball into box'
+    elif row['PS_Att - Shot-Outside'] > th.iloc[1]['upper'] and row['PS_Att - Shot-Inside'] < th.iloc[0]['under']:
+        return 'Shots on sight'
+    else:
+        return ''
+  ts['PS1'] = ts.apply(lambda row: pstyle(row), axis=1)
+
+  def pstyle(row):  
+    if row['PS_Att - Shot-Freq'] > th.iloc[2]['upper']:
+        return 'Shot more often'
+    elif row['PS_Att - Shot-Freq'] < th.iloc[2]['under']:
+        return 'Shot less often'
+    else:
+        return ''
+  ts['PS2'] = ts.apply(lambda row: pstyle(row), axis=1)
+
+  def pstyle(row):  
+    if row['PS_Att - Cross-Freq'] > th.iloc[3]['upper']:
+        return 'Cross more often'
+    elif row['PS_Att - Cross-Freq'] < th.iloc[3]['under']:
+        return 'Cross less often'
+    else:
+        return ''
+  ts['PS3'] = ts.apply(lambda row: pstyle(row), axis=1)
+
+  def pstyle(row):  
+    if row['PS_Att - Long Pass/Short Pass'] > th.iloc[4]['upper']:
+        return 'Direct passing'
+    elif row['PS_Att - Long Pass/Short Pass'] < th.iloc[4]['under']:
+        return 'Shorter passing'
+    else:
+        return 'Mixed passing'
+  ts['PS4'] = ts.apply(lambda row: pstyle(row), axis=1)
+
+  def pstyle(row):  
+    if row['PS_Poss - Poss-Dom.'] > th.iloc[5]['upper']:
+        return 'Possession football'
+    elif row['PS_Poss - Poss-Dom.'] < th.iloc[5]['under']:
+        return 'Counter-attack'
+    else:
+        return ''
+  ts['PS5'] = ts.apply(lambda row: pstyle(row), axis=1)
+
+  def pstyle(row):  
+    if row['PS_Deff - Agg.'] > th.iloc[6]['upper']:
+        return 'Get stuck in'
+    elif row['PS_Deff - Agg.'] < th.iloc[6]['under']:
+        return 'Stay on feet'
+    else:
+        return ''
+  ts['PS5'] = ts.apply(lambda row: pstyle(row), axis=1)
+
+  def sw(row):  
+    if row['SW_Att - Offside'] < th.iloc[7]['under']:
+        return 'Beating offside trap'
+    else:
+        return ''
+  ts['S1'] = ts.apply(lambda row: sw(row), axis=1)
+
+  def sw(row):  
+    if row['SW_Att - Offside'] > th.iloc[7]['upper']:
+        return 'Beating offside trap'
+    else:
+        return ''
+  ts['W1'] = ts.apply(lambda row: sw(row), axis=1)
+
+  def sw(row):  
+    if row['SW_Att - Poss-Eff.'] > th.iloc[8]['upper']:
+        return 'Effective in possession'
+    else:
+        return ''
+  ts['S2'] = ts.apply(lambda row: sw(row), axis=1)
+
+  def sw(row):  
+    if row['SW_Att - Poss-Eff.'] < th.iloc[8]['under']:
+        return 'Ineffective in possession'
+    else:
+        return ''
+  ts['W2'] = ts.apply(lambda row: sw(row), axis=1)
+
+  def sw(row):  
+    if row['SW_Att - Poss-RTT.'] > th.iloc[9]['upper']:
+        return 'Retaining possession'
+    else:
+        return ''
+  ts['S3'] = ts.apply(lambda row: sw(row), axis=1)
+
+  def sw(row):  
+    if row['SW_Att - Poss-RTT.'] < th.iloc[9]['under']:
+        return 'Retaining possession'
+    else:
+        return ''
+  ts['W3'] = ts.apply(lambda row: sw(row), axis=1)
+
+  def sw(row):  
+    if row['SW_Att - Fin.'] > th.iloc[10]['upper']:
+        return 'Finishing scoring chances'
+    else:
+        return ''
+  ts['S4'] = ts.apply(lambda row: sw(row), axis=1)
+
+  def sw(row):  
+    if row['SW_Att - Fin.'] < th.iloc[10]['under']:
+        return 'Finishing scoring chances'
+    else:
+        return ''
+  ts['W4'] = ts.apply(lambda row: sw(row), axis=1)
+
+  def sw(row):  
+    if row['SW_Deff - Regain'] > th.iloc[11]['upper']:
+        return 'Regaining possesion'
+    else:
+        return ''
+  ts['S5'] = ts.apply(lambda row: sw(row), axis=1)
+
+  def sw(row):  
+    if row['SW_Deff - Regain'] < th.iloc[11]['under']:
+        return 'Regaining possesion'
+    else:
+        return ''
+  ts['W5'] = ts.apply(lambda row: sw(row), axis=1)
+
+  def sw(row):  
+    if row['SW_Deff - Aerial'] > th.iloc[12]['upper']:
+        return 'Aerial duels'
+    else:
+        return ''
+  ts['S6'] = ts.apply(lambda row: sw(row), axis=1)
+
+  def sw(row):  
+    if row['SW_Deff - Aerial'] < th.iloc[12]['under']:
+        return 'Aerial duels'
+    else:
+        return ''
+  ts['W6'] = ts.apply(lambda row: sw(row), axis=1)
+
+  def sw(row):  
+    if row['SW_Deff - Tackle'] > th.iloc[13]['upper']:
+        return 'Tackling effectiveness'
+    else:
+        return ''
+  ts['S7'] = ts.apply(lambda row: sw(row), axis=1)
+
+  def sw(row):  
+    if row['SW_Deff - Tackle'] < th.iloc[13]['under']:
+        return 'Tackling effectiveness'
+    else:
+        return ''
+  ts['W7'] = ts.apply(lambda row: sw(row), axis=1)
+
+  desc = ts[['Team','PS1','PS2','PS3','PS4','PS5', 
+             'S1','S2','S3','S4','S5','S6','S7',
+             'W1','W2','W3','W4','W5','W6','W7']]
+
+  return desc
+
+def get_wdl(data, team, gws):
+  df = data.copy()
+  gw_list = gws
+  df = df[df['Team']==team]
+  df = df[df['Gameweek'].isin(gw_list)]
+
+  uk = df[['Match', 'Result', 'Date', 'Gameweek']]
+  uk = uk.groupby(['Match', 'Result', 'Date', 'Gameweek'], as_index=False).nunique()
+
+  uk['Home'] = uk['Match'].str.split(' -').str[0]
+  uk['Away'] = uk['Match'].str.split('- ').str[1]
+  uk['FTHG'] = uk['Result'].str.split(' -').str[0]
+  uk['FTAG'] = uk['Result'].str.split('- ').str[1]
+  uk['FTHG'] = uk['FTHG'].astype(int)
+  uk['FTAG'] = uk['FTAG'].astype(int)
+  uk['GW'] = uk['Gameweek']
+  uk['Rslt'] = 'S'
+  uk['AR'] = 'W'
+
+  for i in range(len(uk)):
+    if (uk['FTHG'][i] > uk['FTAG'][i]):
+      uk['Rslt'][i] = 'W'
+      uk['AR'][i] = 'L'
+    elif (uk['FTHG'][i] < uk['FTAG'][i]):
+      uk['Rslt'][i] = 'L'
+      uk['AR'][i] = 'W'
+    else:
+      uk['Rslt'][i] = 'D'
+      uk['AR'][i] = 'D'
+
+  for i in range(len(uk)):
+    if (uk['Home'][i]!=team) and (uk['Rslt'][i]=='W'):
+      uk['Rslt'][i] = 'L'
+    elif (uk['Home'][i]!=team) and (uk['Rslt'][i]=='L'):
+      uk['Rslt'][i] = 'W'
+
+
+  uk = uk[['Date', 'GW', 'Rslt', 'Home', 'FTHG', 'FTAG', 'Away']]
+  uk = uk.sort_values(by='GW').reset_index(drop=True)
+
+  def bg_col(val):
+    if val == 'W':
+      color = '#7ed957'
+    elif val == 'L':
+      color = '#d9577e'
+    elif val == 'D':
+      color = '#a6a6a6'
+    else:
+      color = 'white'
+    return 'background-color: %s' % color
+  uk = uk.style.applymap(bg_col)
+
+  return uk
+
+def get_skuad(data, data2, team, gws):
+  df = data.copy()
+  db = data2.copy()
+
+  gw_list = gws
+
+  import datetime as dt
+  from datetime import date
+
+  today = date.today()
+  db['Age'] = db['DoB'].apply(lambda x: today.year - x.year - ((today.month, today.day) < (x.month, x.day)))
+
+  df = df[df['Team']==team]
+  df = df[df['Gameweek'].isin(gw_list)]
+  df = df[['Player ID','MoP','Goal','Penalty Goal','Assist','Yellow Card','Red Card']]
+  df['Goals'] = df['Goal']+df['Penalty Goal']
+
+  df = df.groupby('Player ID', as_index=False).sum()
+  fin = pd.merge(df, db, on='Player ID', how='left')
+  fin = fin[['Nickname','Age','Nationality','Position','MoP',
+             'Goals','Assist','Yellow Card','Red Card']]
+  
+  return fin
+
+def get_formasi(data, data2):
+  df = data.copy()
+  cd = data2.copy()
+
+  df_ft = df[df['Position (in match)'].notna()]
+  df_ft = df_ft[['Gameweek', 'Name', 'Position (in match)', 'Team', 'Opponent', 'Match']]
+  #df_ft = df_ft[(df_ft['Gameweek']==gw) & (df_ft['Team']==team)]
+  df_ft = pd.merge(df_ft, cd, on='Position (in match)', how='left')
+  df_ft['Formation'] = ''
+  df_ft = df_ft.reset_index()
+
+  x = 0
+  y = 11
+  for i in range(len(df_ft)):
+    for j in range(x, y):
+      tpr = df_ft[(df_ft['index'] >= x) & (df_ft['index'] < y)]
+      a = list(tpr['Kode'].unique())
+      fms = []
+      old_stdout = sys.stdout
+      new_stdout = io.StringIO()
+      sys.stdout = new_stdout
+
+      for m in a:
+        temp = tpr[(tpr['Kode']==m)]['Kode'].count()
+        fms.append(temp)
+
+      for n in range(len(fms)):
+        if (n != (len(fms)-1)):
+          print(fms[n], end='-')
+        else:
+          print(fms[n], end='')
+
+      df_ft['Formation'][j] = new_stdout.getvalue()
+      sys.stdout = old_stdout
+    x += 11
+    y += 11
+
+  fixdata = df_ft[['Gameweek', 'Team', 'Match', 'Formation']]
+  fixdata = fixdata.groupby(['Gameweek', 'Match', 'Team'])['Formation'].unique().reset_index()
+  for k in range(len(fixdata)):
+    fixdata['Formation'][k] = list(fixdata['Formation'][k])[0]
+  fixdata = fixdata[['Gameweek', 'Team', 'Match', 'Formation']]
+
+  return fixdata
