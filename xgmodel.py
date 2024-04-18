@@ -14,7 +14,7 @@ def load_data(sheets_url):
     xlsx_url = sheets_url.replace("/edit#gid=", "/export?format=xlsx&gid=")
     return pd.read_excel(xlsx_url)
 
-df = load_data(st.secrets["public_gsheets_url"])
+df = load_data(st.secrets["for_xg"])
 
 #df = pd.read_excel(st.secrets["public_gsheets_url"])
 
