@@ -13,7 +13,5 @@ from matplotlib.offsetbox import (OffsetImage, AnnotationBbox)
 import matplotlib.font_manager as fm
 from matplotlib.patches import FancyBboxPatch
 
-sys.path.append("fungsiplot.py")
-import fungsiplot
 from fungsiplot import plot_skuad
 from fungsiplot import plot_skuadbar
