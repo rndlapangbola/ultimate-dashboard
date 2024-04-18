@@ -15,11 +15,16 @@ from matplotlib.patches import FancyBboxPatch
 
 from fungsiplot import plot_skuad
 from fungsiplot import plot_skuadbar
+from fungsiplot import plot_form
 
 from listfungsi import data_team
 from listfungsi import data_player
 from listfungsi import get_list
 from listfungsi import get_detail
+from listfungsi import get_pssw
+from listfungsi import get_wdl
+from listfungsi import get_skuad
+from listfungsi import get_formasi
 
 st.set_page_config(page_title='Team Detailed', layout='wide')
 st.markdown('# Team Detailed')
