@@ -1191,3 +1191,75 @@ def get_playerlist(data, komp, pos, mins, nat, age, arr_met):
   data = data.sort_values(by=['mean'], ascending=False).reset_index(drop=True)
   
   return data
+
+def get_PNdata(tl, rp, min_min, max_min, team):
+  df = tl.copy()
+  df2 = rp.copy()
+
+  pos = df2[df2['Team']==team]
+  pos['Position (in match)'].fillna('SUBS', inplace=True)
+  pos = pos[pos['MoP']>0].reset_index(drop=True)
+  pos['Status'] = 'Full'
+  #pos['Nick'] = pos['Name'].str.split(' ').str[0]
+
+  for i in range(len(pos)):
+    if (pos['MoP'][i] < 90) and (pos['Position (in match)'][i]!='SUBS'):
+      pos['Status'][i] = 'Sub Out'
+    elif (pos['MoP'][i] < 90) and (pos['Position (in match)'][i]=='SUBS'):
+      pos['Status'][i] = 'Sub In'
+    else:
+      pos['Status'][i] = 'Full'
+            
+  pos = pos[['No. Punggung', 'Name', 'Position (in match)', 'Status', 'Nick']]
+  pos.rename({'Name':'Passer', 'Position (in match)':'Pos', 'No. Punggung':'No'}, axis='columns',inplace=True)
+
+  df['Minx'] = df['Min'].str.split(' :').str[0]
+  df['Mins'] = df['Minx'].str.split('+').str[0]
+  df['Mins'].fillna(df['Minx'], inplace=True)
+  df['Mins'] = df['Mins'].astype(float)
+  pos['No'] = pos['No'].astype(int)
+
+  firstsub = df[(df['Action']=='subs') | (df['Action']=='red card')]
+  firstsub = firstsub[firstsub['Team']==team]
+  listmin = list(firstsub['Mins'])
+  df = df[df['Act Zone'].notna()]
+
+  minmin = min_min
+  maxmin = max_min+1
+
+  data = df[df['Action']=='passing']
+  data = data[data['Team']==team]
+  data = data[data['Mins']<=maxmin][data['Mins']>=minmin]
+  pascnt = data[['Act Name', 'Act Zone', 'Pas Name']]
+  pascnt = pascnt.groupby(['Act Name','Pas Name'], as_index=False).count()
+  pascnt.rename({'Act Name':'Passer','Pas Name':'Recipient','Act Zone':'Count'}, axis='columns',inplace=True)
+  highest_passes = pascnt['Count'].max()
+  pascnt['passes_scaled'] = pascnt['Count']/highest_passes
+
+  data2 = df[df['Team']==team]
+  data2 = data2[data2['Mins']<=maxmin][data2['Mins']>=minmin]
+  avgpos = data2[['Act Name', 'Act Zone']]
+  temp = avgpos['Act Zone'].apply(lambda x: pd.Series(list(x)))
+  avgpos['X'] = temp[0]
+  avgpos['Y'] = temp[1]
+  avgpos['Y'] = avgpos['Y'].replace({'A':10,'B':30,'C':50,'D':70,'E':90})
+  avgpos['X'] = avgpos['X'].replace({'1':8.34,'2':25.34,'3':42.34,
+                                     '4':59.34,'5':76.34,'6':93.34})
+  avgpos = avgpos[['Act Name','X','Y']]
+  avgpos = avgpos.groupby(['Act Name'], as_index=False).mean()
+  avgpos.rename({'Act Name':'Passer'}, axis='columns',inplace=True)
+  avgpos['Recipient'] = avgpos['Passer']
+  avgpos = pd.merge(avgpos, pos, on='Passer', how='left')
+
+  pass_between = pd.merge(pascnt, avgpos.drop(['Recipient'], axis=1), on='Passer', how='left')
+  pass_between = pd.merge(pass_between, avgpos.drop(['Passer'], axis=1), on='Recipient', how='left', suffixes=['','_end']).drop('Pos_end', axis=1)
+
+  passtot = pass_between[['Passer', 'Count']]
+  passtot = passtot.groupby('Passer', as_index=False).sum()
+  passtot.rename({'Count':'Total'}, axis='columns',inplace=True)
+  passtot['size'] = (passtot['Total']/max(passtot['Total']))*3000
+
+  #pass_between = pass_between[pass_between['Count']>=min_pass]
+  pass_between = pd.merge(pass_between, passtot, on='Passer', how='left')
+
+  return pass_between, listmin
