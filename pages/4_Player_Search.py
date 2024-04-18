@@ -35,7 +35,7 @@ temple = pd.merge(rank_pct, db_temp2, on='Name', how='left')
 templist = rank_pct.drop(['Name','Position','Team','MoP','Kompetisi'], axis=1)
 metlist = list(templist)
 
-col1, col2= st.columns(3)
+col1, col2= st.columns(2)
 with col1:
   pos = st.selectbox('Select Position', pd.unique(temple['Position']), key='87')
   nats = st.multiselect('Select Nat. Status', ['Foreign', 'Local'], key='86')
