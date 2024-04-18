@@ -86,7 +86,7 @@ with col7:
                                  file_name=fn, mime="image/jpg")
 with col8:
     #mirip = smr.head(7)
-    #ply2 = st.selectbox('Select Similar Player', pd.unique(smr.head(7)['Name']), key='105')
-    ply2 = st.text_input('Select Similar Player', placeholder='Select Similar Player')
+    ply2 = st.selectbox('Select Similar Player', pd.unique(smr.head(7)['Name']), key='105')
+    #ply2 = st.text_input('Select Similar Player', placeholder='Select Similar Player')
     cpre = plot_compare(ply, ply2, pos, rank_p90)
     st.pyplot(cpre)
