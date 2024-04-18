@@ -24,8 +24,8 @@ from listfungsi import get_radar
 from listfungsi import get_simi
 from listfungsi import get_pct
 
-st.set_page_config(page_title='Team Detailed', layout='wide')
-st.markdown('# Team Detailed')
+st.set_page_config(page_title='Player Detailed', layout='wide')
+st.markdown('# Player Detailed')
 
 @st.cache_data(ttl=600)
 def load_data(sheets_url):
