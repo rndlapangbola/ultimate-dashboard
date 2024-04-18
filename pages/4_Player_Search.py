@@ -8,6 +8,7 @@ import urllib
 
 from listfungsi import get_detail
 from listfungsi import get_pct
+from listfungsi import get_playerlist
 
 st.set_page_config(page_title='Player Search', layout='wide')
 st.markdown('# Search')
@@ -19,8 +20,6 @@ def load_data(sheets_url):
 
 df1 = load_data(st.secrets["datateam"])
 df2 = load_data(st.secrets["datapemain"])
-
-
 
 db_temp = get_detail(df2)
 db_temp2 = db_temp[['Name','Age Group','Nat. Status']]
@@ -39,5 +38,9 @@ with col3:
                          max_value=3060, step=90, key=85)
   arr_met = st.multiselect('Select Metrics', metlist, key='84')
             
+rank_pct = get_pct(df1, df2, mins, komp)[2]
 playlist = get_playerlist(temple, komp, pos, mins, nats, ages, arr_met)
+
+
+
 st.dataframe(playlist.head(10))
