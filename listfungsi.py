@@ -1173,9 +1173,8 @@ def get_playerlist(data, komp, pos, mins, nat, age, arr_met):
 
   ag_list = age
   nt_list = nat
-  kp_list = komp
 
-  df = df[df['Kompetisi'].isin(kp_list)]
+  df = df[df['Kompetisi']==komp]
   df = df[df['Nat. Status'].isin(nt_list)]
   df = df[df['Age Group'].isin(ag_list)]
   df = df[df['MoP']>=mins]
