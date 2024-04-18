@@ -32,6 +32,12 @@ df22 = get_detail(df2)
 df = pd.merge(df1, df2.drop(['Name'], axis=1), on='Player ID', how='left')
 fulldata = get_detail(df)
 mlist = get_list(fulldata)
+no_temp = df1[df1['Kompetisi']=='Liga 1']
+histodata = milestone(histdata, no_temp)
+csdata = get_cs(no_temp)
+curdata = df1[['Team','Assist','Yellow Card','Red Card']]
+curdata = curdata.groupby(['Team'], as_index=False).sum()
+curdata2 = pd.merge(curdata, csdata, on='Team', how='left')
 
 from datetime import date
 date = date.today().strftime("%Y-%m-%d")
