@@ -11,6 +11,7 @@ import pandas as pd
 import glob
 from datetime import date
 import numpy as np
+import math
 
 from sklearn import preprocessing
 from sklearn.cluster import KMeans
