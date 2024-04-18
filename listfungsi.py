@@ -177,7 +177,6 @@ def assign_xg(data):
 
   return fixdata
 
-
 def data_team(data, komp, month, gw, venue, cat):
   df = data.copy()
   df_og = data.copy()
