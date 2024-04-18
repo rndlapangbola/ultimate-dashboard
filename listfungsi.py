@@ -177,6 +177,33 @@ def assign_xg(data):
 
   return fixdata
 
+def add_og(data):
+  df = data.copy()
+  dfog = df[['Match', 'Team', 'Opponent', 'Own Goal']]
+  dfog = dfog.groupby(['Match', 'Team', 'Opponent'], as_index=False).sum()
+  dfog['Team'] = dfog['Opponent']
+  dfog['Goal - Own Goal'] = dfog['Own Goal']
+  df_clean = dfog[['Team', 'Goal - Own Goal']]
+  df_clean = df_clean.groupby('Team', as_index=False).sum()
+  return df_clean
+
+def add_conc(data):
+  df = data.copy()
+  conc = df[['Opponent','Goal','Penalty Goal','Shot on','Shot off','Shot Blocked']]
+  conc['Goals Conceded'] = conc['Goal']+conc['Penalty Goal']
+  conc['Shots Allowed'] = conc['Shot on']+conc['Shot off']+conc['Shot Blocked']
+  conc = conc[['Opponent','Goals Conceded','Shots Allowed']].rename(columns={'Opponent':'Team'})
+  df_clean1 = conc.groupby('Team', as_index=False).sum()
+
+  dfog = df[['Team','Own Goal']]
+  df_clean2 = dfog.groupby('Team', as_index=False).sum()
+
+  df_clean = pd.merge(df_clean1, df_clean2, on='Team', how='left')
+  df_clean['Goals Conceded'] = df_clean['Goals Conceded']+df_clean['Own Goal']
+  df_clean = df_clean[['Team','Goals Conceded','Shots Allowed']]
+
+  return df_clean
+
 def data_team(data, komp, month, gw, venue, cat):
   df = data.copy()
   df_og = data.copy()
