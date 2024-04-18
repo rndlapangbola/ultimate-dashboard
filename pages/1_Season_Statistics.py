@@ -109,14 +109,14 @@ with comps:
                     st.metric(label="Concededs", value=int(list((curdata2[curdata2['Team']==team]['Conceded']).reset_index(drop=True))[0]))
                 with col6:
                     st.metric(label="Clean Sheets", value=int(list((curdata2[curdata2['Team']==team]['Clean Sheet']).reset_index(drop=True))[0]))
-        st.markdown('''<style>
-            [data-testid="stMetricLabel"] > div:nth-child(1) {justify-content: center;}
-            [data-testid="stMetricValue"] > div:nth-child(1) {justify-content: center;}
-            [data-testid="stMetricLabel"] > div:nth-child(1) {justify-content: center;}
-            [data-testid="stMetricValue"] > div:nth-child(1) {justify-content: center;}
-            [data-testid="stMetricLabel"] > div:nth-child(1) {justify-content: center;}
-            [data-testid="stMetricValue"] > div:nth-child(1) {justify-content: center;}
-            </style>''', unsafe_allow_html=True)
+    st.markdown('''<style>
+        [data-testid="stMetricLabel"] > div:nth-child(1) {justify-content: center;}
+        [data-testid="stMetricValue"] > div:nth-child(1) {justify-content: center;}
+        [data-testid="stMetricLabel"] > div:nth-child(1) {justify-content: center;}
+        [data-testid="stMetricValue"] > div:nth-child(1) {justify-content: center;}
+        [data-testid="stMetricLabel"] > div:nth-child(1) {justify-content: center;}
+        [data-testid="stMetricValue"] > div:nth-child(1) {justify-content: center;}
+        </style>''', unsafe_allow_html=True)
 
 with teams:
     col1, col2, col3, col4, col5 = st.columns(5)
