@@ -16,10 +16,15 @@ from matplotlib.patches import FancyBboxPatch
 from fungsiplot import plot_skuad
 from fungsiplot import plot_skuadbar
 
-
+from listfungsi import data_team
+from listfungsi import data_player
+from listfungsi import get_list
+from listfungsi import get_detail
 
 st.set_page_config(page_title='Team Detailed', layout='wide')
 st.markdown('# Team Detailed')
+
+
 
 col1, col2, col3 = st.columns(3)
 with col1:
