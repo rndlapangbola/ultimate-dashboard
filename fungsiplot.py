@@ -458,3 +458,109 @@ def plot_compare(p1, p2, pos, data):
   plt.savefig('radar.jpg', dpi=500, bbox_inches='tight', facecolor=fig.get_facecolor(), edgecolor='none')
 
   return fig
+
+def plot_PN(data, min_pass, team, min_min, max_min, match, gw):
+  pass_between = data.copy()
+  fig, ax = plt.subplots(figsize=(20, 20), dpi=500)
+  fig.patch.set_facecolor('#ffffff')
+  ax.set_facecolor('#ffffff')
+
+  pitch = Pitch(pitch_type='wyscout', pitch_color='#ffffff', line_color='#000000', pad_bottom=13, pad_top=12,
+                corner_arcs=True, stripe=True, stripe_color='#fcf8f7', goal_type='box', linewidth=3.5)
+  pitch.draw(ax=ax)
+
+  cmap = plt.cm.get_cmap(hcmap)
+  for row in pass_between.itertuples():
+    if row.Count > min_pass:
+      if abs(row.Y_end - row.Y) > abs(row.X_end - row.X):
+        if row.Passer > row.Recipient:
+          x_shift, y_shift = 0, 2
+        else:
+          x_shift, y_shift = 0, -2
+      else:
+        if row.Passer > row.Recipient:
+          x_shift, y_shift = 2, 0
+        else:
+          x_shift, y_shift = -2, 0
+
+      ax.plot([row.X_end+x_shift, row.X+x_shift],[row.Y_end+y_shift, row.Y+y_shift],
+              color=cmap(row.passes_scaled), lw=3, alpha=row.passes_scaled)
+
+      ax.annotate('', xytext=(row.X_end+x_shift, row.Y_end+y_shift),
+                  xy=(row.X_end+x_shift+((row.X-row.X_end)/2),
+                      row.Y_end+y_shift+((row.Y-row.Y_end)/2)),
+                  arrowprops=dict(arrowstyle='->', color=cmap(row.passes_scaled),
+                                  lw=3, alpha=row.passes_scaled), size=25)
+  avgpos = pass_between[['Passer', 'X', 'Y', 'size', 'No', 'Pos', 'Status', 'Nick']]
+  avgpos = avgpos.groupby(['Passer', 'X', 'Y', 'size', 'No', 'Pos', 'Status', 'Nick'], as_index=False).nunique()
+      
+  for i in range(len(avgpos)):
+    if (avgpos['Status'][i]=='Full'):
+      pitch.scatter(avgpos['X'][i], avgpos['Y'][i], s = avgpos['size'][i], zorder=10,
+                    color='#ffffff', edgecolors='#000000', linewidth=5, ax=ax)
+    elif (avgpos['Status'][i]=='Sub In'):
+      pitch.scatter(avgpos['X'][i], avgpos['Y'][i], s = avgpos['size'][i], zorder=10,
+                    color='#ffffff', edgecolors='#000000', linewidth=5, ax=ax)
+      pitch.scatter(avgpos['X'][i]-1.5, avgpos['Y'][i]-2, s = 300, zorder=10,
+                    color='#7ed957', edgecolors='#000000', linewidth=2, ax=ax, marker='^')
+    else:
+      pitch.scatter(avgpos['X'][i], avgpos['Y'][i], s = avgpos['size'][i], zorder=10,
+                    color='#ffffff', edgecolors='#000000', linewidth=5, ax=ax)
+      pitch.scatter(avgpos['X'][i]+1.5, avgpos['Y'][i]+2, s = 300, zorder=10,
+                    color='#e66009', edgecolors='#000000', linewidth=2, ax=ax, marker='v')
+    pitch.annotate(avgpos['No'][i], xy=(avgpos['X'][i], avgpos['Y'][i]), c='#000000', va='center', zorder=11,
+                   ha='center', size=16, weight='bold', ax=ax, path_effects=path_eff)
+    pitch.annotate(avgpos['Nick'][i], xy=(avgpos['X'][i], avgpos['Y'][i]+5), c='#000000', va='center', zorder=11,
+                   ha='center', size=14, weight='bold', ax=ax, path_effects=path_eff)
+              
+  if (min_min == 0):
+    min_mins = min_min+1
+  else:
+    min_mins = min_min
+
+  if (max_min == 91):
+    max_mins = max_min-1
+  else:
+    max_mins = max_min
+
+  anot_x = [75, 79, 84, 90]
+  anot_y = [105.35, 105.25, 105.15, 105]
+  anot_s = [500, 1000, 1500, 2000]
+  for x, y, s in zip(anot_x, anot_y, anot_s):
+    ax.scatter(x, y, s=s, c='#ffffff', lw=5,
+               marker='o', edgecolors='#000000')
+  pitch.arrows(74, 110, 92, 110, width=2, color='#000000',
+               headwidth=7, ax=ax)
+  ax.text(75, 112, '1 pass', ha='center', fontproperties=bold, color='#000000', size='16', va='center')
+  ax.text(90, 112, '40+ passes', ha='center', fontproperties=bold, color='#000000', size='16', va='center')
+
+  anot_x1 = [8, 12, 16, 20]
+  anot_x2 = [11, 15, 19, 23]
+  anot_a = [0.7, 0.8, 0.9, 1]
+  anot_c = ['#839696','#597373','#305050','#062d2d']
+  for x1, x2, a, c in zip(anot_x1, anot_x2, anot_a, anot_c):
+    pitch.lines(x1, 109, x2, 102, color=c,
+                zorder=1, lw=4, alpha=a, ax=ax)
+  pitch.arrows(7, 110, 23, 110, width=2, color='#000000',
+               headwidth=7, ax=ax)
+  if (min_pass == 1):
+    ax.text(8, 112, str(min_pass)+' pass', ha='center', fontproperties=bold, color='#000000', size='16', va='center')
+  else:
+    ax.text(8, 112, str(min_pass)+' passes', ha='center', fontproperties=bold, color='#000000', size='16', va='center')
+  ax.text(23, 112, '10+ passes', ha='center', fontproperties=bold, color='#000000', size='16', va='center')
+
+  pitch.scatter(40, 106, s = 800, zorder=10, color='#7ed957',
+                edgecolors='#000000', linewidth=4, ax=ax, marker='^')
+  ax.text(40, 112, 'Subbed In', ha='center', fontproperties=bold, color='#000000', size='16', va='center')
+  pitch.scatter(60, 106, s = 800, zorder=10, color='#e66009',
+                edgecolors='#000000', linewidth=4, ax=ax, marker='v')
+  ax.text(60, 112, 'Subbed Out', ha='center', fontproperties=bold, color='#000000', size='16', va='center')
+
+  ax.text(0, -8, 'PASSING NETWORK', ha='left', fontproperties=bold, color='#000000', size='22', va='center')
+  ax.text(0, -4, team.upper()+' | MINUTES: '+str(min_mins)+'-'+str(max_mins), ha='left', fontproperties=reg, color='#000000', size='18', va='center')
+  ax.text(100, -8, match.upper(), ha='right', fontproperties=reg, color='#000000', size='18', va='center')
+  ax.text(100, -4, gw, ha='right', fontproperties=reg, color='#000000', size='18', va='center')
+  
+  plt.savefig('pnet.jpg', dpi=500, bbox_inches='tight', facecolor=fig.get_facecolor(), edgecolor='none')
+  
+  return fig
