@@ -10,6 +10,8 @@ from listfungsi import data_team
 from listfungsi import data_player
 from listfungsi import get_list
 from listfungsi import get_detail
+from listfungsi import get_cs
+from listfungsi import milestone
 
 st.set_page_config(page_title='Full Season Statistics', layout='wide')
 st.markdown('# Statistics')
@@ -21,6 +23,7 @@ def load_data(sheets_url):
 
 df1 = load_data(st.secrets["datateam"])
 df2 = load_data(st.secrets["datapemain"])
+histdata = load_data(st.secrets["hist"])
 
 from datetime import date
 df1['Date'] = pd.to_datetime(df1.Date)
