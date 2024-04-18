@@ -11,7 +11,12 @@ import pandas as pd
 import glob
 from datetime import date
 import numpy as np
+
 from sklearn import preprocessing
+from sklearn.cluster import KMeans
+from yellowbrick.cluster import KElbowVisualizer
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
 
 posdict = {'gk':{'position':'Goalkeeper',
                  'metrics':['Name','Long Goal Kick Ratio','Pass Accuracy','Cross Claim',
