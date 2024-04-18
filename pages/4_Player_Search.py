@@ -20,10 +20,10 @@ def load_data(sheets_url):
 
 df1 = load_data(st.secrets["datateam"])
 df2 = load_data(st.secrets["datapemain"])
+rank_pct = load_data(st.secrets["metrik"])
 
 db_temp = get_detail(df2)
 db_temp2 = db_temp[['Name','Age Group','Nat. Status']]
-rank_pct = get_pct(df1, df2, mins, komp)[2]
 temple = pd.merge(rank_pct, db_temp2, on='Name', how='left')
 templist = rank_pct.drop(['Name','Position','Team','MoP','Kompetisi'], axis=1)
 metlist = list(templist)
