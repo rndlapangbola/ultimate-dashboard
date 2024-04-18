@@ -36,6 +36,9 @@ def load_data(sheets_url):
 
 df1 = load_data(st.secrets["datateam"])
 df2 = load_data(st.secrets["datapemain"])
+th = load_data(st.secrets["th"])
+cf = load_data(st.secrets["cf"])
+cd = load_data(st.secrets["cd"])
 
 from datetime import date
 df1['Date'] = pd.to_datetime(df1.Date)
