@@ -21,7 +21,7 @@ def load_data(sheets_url):
 df1 = load_data(st.secrets["datateam"])
 df2 = load_data(st.secrets["datapemain"])
 
-with st.expander('Hide'):
+with st.expander('Open'):
     col1, col2 = st.columns(2)
     with col1:
         komp = st.selectbox('Select Competition', ['Liga 1', 'Liga 2'], key='3')
