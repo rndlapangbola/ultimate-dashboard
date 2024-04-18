@@ -20,7 +20,14 @@ def load_data(sheets_url):
 
 df1 = load_data(st.secrets["datateam"])
 df2 = load_data(st.secrets["datapemain"])
-rank_pct = load_data(st.secrets["metrik"])
+
+with st.expander('Hide'):
+    col1, col2 = st.columns(2)
+    with col1:
+        komp = st.selectbox('Select Competition', ['Liga 1', 'Liga 2'], key='3')
+    with col2:
+        mins = st.number_input('Input minimum mins. played', min_value=90, step=90, key='4')
+    rank_pct = get_pct(df1, df2, mins, komp)[2]
 
 db_temp = get_detail(df2)
 db_temp2 = db_temp[['Name','Age Group','Nat. Status']]
@@ -30,13 +37,13 @@ metlist = list(templist)
 
 col1, col2, col3 = st.columns(3)
 with col1:
-  komp = st.multiselect('Select Competition', ['Liga 1', 'Liga 2'], key='89')
+  komp = st.selectbox('Select Competition', ['Liga 1', 'Liga 2'], key='89')
   pos = st.selectbox('Select Position', pd.unique(temple['Position']), key='87')
 with col2:
   nats = st.multiselect('Select Nat. Status', ['Foreign', 'Local'], key='86')
   ages = st.multiselect('Select Age Groups', ['Senior', 'U23'], key='88')
 with col3:
-  mins = st.number_input('Input minimum mins. played', min_value=90, step=90, key=85)
+  mins = st.number_input('Input minimum mins. played', min_value=90, step=90, key='85')
   arr_met = st.multiselect('Select Metrics', metlist, key='84')
 
 playlist = get_playerlist(temple, komp, pos, mins, nats, ages, arr_met)
