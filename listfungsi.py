@@ -12,6 +12,27 @@ from datetime import date
 import numpy as np
 from sklearn import preprocessing
 
+posdict = {'gk':{'position':'Goalkeeper',
+                 'metrics':['Name','Long Goal Kick Ratio','Pass Accuracy','Cross Claim',
+                            'Keeper - Sweeper','Saves','Save Ratio','Penalty Save']},
+           'cb':{'position':'Center Back',
+                 'metrics':['Name','Shots','Goals','Assist','Pass Accuracy',
+                            'Tackle','Intercept','Recovery','Blocks','Aerial Won Ratio']},
+           'fb':{'position':'Fullback',
+                 'metrics':['Name','Shots','Goals','Create Chance','Assist','Pass Accuracy','Dribble',
+                            'Cross','Tackle','Intercept','Recovery','Blocks','Aerial Won Ratio']},
+           'cm':{'position':'Midfielder',
+                 'metrics':['Name','Shots','Goals','Create Chance','Shot on Target Ratio','Assist',
+                            'Pass Accuracy','Dribble','Tackle','Intercept','Recovery','Blocks']},
+           'cam/w':{'position':'Attacking 10/Winger',
+                    'metrics':['Name','Shots','Goals','Create Chance','Shot on Target Ratio',
+                               'Conversion Ratio','Assist','Pass Accuracy','Dribble','Cross',
+                               'Tackle','Intercept','Recovery']},
+           'fw':{'position':'Forward',
+                 'metrics':['Name','Shots','Goals','Create Chance','Shot on Target Ratio',
+                            'Conversion Ratio','Assist','Pass Accuracy','Dribble','Tackle',
+                            'Intercept','Recovery','Aerial Won Ratio']}}
+
 def assign_xg(data):
   df_match = data.copy()
 
@@ -155,3 +176,264 @@ def assign_xg(data):
   fixdata['xG'] = dfxg['xG']
 
   return fixdata
+
+
+def data_team(data, komp, month, gw, venue, cat):
+  df = data.copy()
+  df_og = data.copy()
+  gw_list = gw
+  vn_list = venue
+  mn_list = month
+
+  from datetime import date
+  df['Date'] = pd.to_datetime(df.Date)
+  df['Month'] = df['Date'].dt.strftime('%B')
+
+  df = df[df['Kompetisi']==komp]
+  df = df[df['Home/Away'].isin(vn_list)]
+  df = df[df['Gameweek'].isin(gw_list)]
+  df = df[df['Month'].isin(mn_list)]
+
+  dfog = add_og(df)
+  dfconc = add_conc(df)
+
+  df['Shots'] = df['Shot on']+df['Shot off']+df['Shot Blocked']
+  df['Goals'] = df['Penalty Goal']+df['Goal']
+  df['Penalties Awarded'] = df['Penalty Goal']+df['Penalty Missed']
+  df['Shots - Inside Box'] = df['Shot on - Inside Box']+df['Shot off - Inside Box']+df['Shot Blocked - Inside Box']
+  df['Shots - Outside Box'] = df['Shot on - Outside Box']+df['Shot off - Outside Box']+df['Shot Blocked - Outside Box']
+  df['Goals - Inside Box'] = df['Penalty Goal']+df['Goal - Inside Box']
+  df['Goals - Open Play'] = df['Goal - Open Play']+df['Goal - Counter Attack']
+  df['Goals - Set Pieces'] = df['Goal - Set-Piece Free Kick']+df['Goal - Throw in']+df['Goal - Corner Kick']
+  df['Total Pass'] = df['Pass']+df['Pass Fail']
+  df['Chances Created'] = df['Key Pass']+df['Assist']
+  df['Crosses'] = df['Cross']+df['Cross Fail']
+  df['Dribbles'] = df['Dribble']+df['Dribble Fail']
+  df['Tackles'] = df['Tackle']+df['Tackle Fail']
+  df['Defensive Actions'] = df['Tackles']+df['Intercept']+df['Clearance']+df['Recovery']
+  df['Saves'] = df['Save']+df['Penalty Save']
+  df['Blocks'] = df['Block']+df['Block Cross']
+  df['Aerial Duels'] = df['Aerial Won']+df['Aerial Lost']
+  df['Errors'] = df['Error Goal - Error Led to Chance'] + df['Error Goal - Error Led to Goal']
+
+  df = df[['Team', 'Shots', 'Shot on', 'Shot off', 'Shot Blocked',
+           'Shots - Inside Box', 'Shots - Outside Box',
+           'Goals', 'Penalties Awarded', 'Penalty Goal',
+           'Goals - Inside Box', 'Goal - Outside Box', 'Goals - Open Play',
+           'Goals - Set Pieces', 'Goal - Corner Kick', 'Total Pass', 'Pass',
+           'Chances Created', 'Crosses', 'Cross', 'Dribbles', 'Dribble',
+           'Tackles', 'Intercept', 'Clearance', 'Recovery', 'Defensive Actions',
+           'Blocks', 'Aerial Duels', 'Aerial Won', 'Saves',
+           'Errors', 'Error Goal - Error Led to Chance', 'Error Goal - Error Led to Goal',
+           'Own Goal', 'Foul', 'Yellow Card', 'Red Card', 'Offside', 'Goal Kick - Goal Kick Launch',
+           'Goal Kick - No Sub-action', 'Goal Kick', 'Pass - Long Ball', 'Assist']]
+  df = df.groupby('Team', as_index=False).sum()
+  df['Conversion Ratio'] = round(df['Goals']/df['Shots'],2)
+  df['Shot on Target Ratio'] = round(df['Shot on']/df['Shots'],2)
+  df['Successful Cross Ratio'] = round(df['Cross']/df['Crosses'],2)
+  df['Pass per Shot'] = round(df['Total Pass']/df['Shots'],2)
+  df['Pass Accuracy'] = round(df['Pass']/df['Total Pass'],2)
+  df['Aerial Won Ratio'] = round(df['Aerial Won']/df['Aerial Duels'],2)
+  df['Goal Kick Grounded Ratio'] = round(df['Goal Kick - No Sub-action']/df['Goal Kick'],2)
+  df['Long Ball Ratio'] = round(df['Pass - Long Ball']/df['Pass'],2)
+
+  df1 = pd.merge(df, dfog, on='Team', how='left')
+  df2 = pd.merge(df1, dfconc, on='Team', how='left')
+  df2['Goals'] = df2['Goals'] + df2['Goal - Own Goal']
+
+  df2 = df2[['Team', 'Shots', 'Shot on', 'Shot off', 'Shot Blocked', 'Shot on Target Ratio',
+             'Shots - Inside Box', 'Shots - Outside Box', 'Goals', 'Penalties Awarded', 'Penalty Goal',
+             'Goals - Inside Box', 'Goal - Outside Box', 'Goals - Open Play', 'Goals - Set Pieces',
+             'Goal - Corner Kick', 'Goal - Own Goal', 'Total Pass', 'Pass', 'Pass Accuracy',
+             'Chances Created', 'Pass per Shot', 'Crosses', 'Cross', 'Successful Cross Ratio',
+             'Dribbles', 'Dribble', 'Tackles', 'Intercept', 'Clearance', 'Recovery', 'Defensive Actions',
+             'Blocks', 'Aerial Duels', 'Aerial Won', 'Aerial Won Ratio', 'Saves', 'Goals Conceded', 'Shots Allowed',
+             'Errors', 'Error Goal - Error Led to Chance', 'Error Goal - Error Led to Goal',
+             'Own Goal', 'Foul', 'Yellow Card', 'Red Card', 'Offside', 'Goal Kick Grounded Ratio', 'Long Ball Ratio',
+             'Goal Kick - Goal Kick Launch', 'Goal Kick - No Sub-action', 'Assist']]
+
+  gt = ['Team', 'Shots', 'Shot on', 'Shot off', 'Shot Blocked', 'Shot on Target Ratio', 'Shots - Inside Box',
+        'Shots - Outside Box', 'Goals', 'Penalties Awarded', 'Penalty Goal', 'Goals - Inside Box', 'Goal - Outside Box',
+        'Goals - Open Play', 'Goals - Set Pieces', 'Goal - Corner Kick', 'Goal - Own Goal', 'Assist']
+  
+  ip = ['Team', 'Total Pass', 'Pass', 'Pass Accuracy', 'Chances Created',
+        'Pass per Shot', 'Crosses', 'Cross', 'Successful Cross Ratio', 'Dribbles', 'Dribble']
+  
+  op = ['Team', 'Tackles', 'Intercept', 'Clearance', 'Recovery', 'Defensive Actions',
+        'Blocks', 'Aerial Duels', 'Aerial Won', 'Aerial Won Ratio', 'Saves',
+        'Goals Conceded', 'Shots Allowed']
+  
+  misc = ['Team', 'Errors', 'Error Goal - Error Led to Chance', 'Error Goal - Error Led to Goal',
+          'Own Goal', 'Foul', 'Yellow Card', 'Red Card', 'Offside', 'Goal Kick Grounded Ratio',
+          'Goal Kick - Goal Kick Launch', 'Goal Kick - No Sub-action']
+  
+  if (cat == 'Goal Threat'):
+    df2 = df2[gt]
+  elif (cat == 'in Possession'):
+    df2 = df2[ip]
+  elif (cat == 'out of Possession'):
+    df2 = df2[op]
+  else:
+    df2 = df2[misc]
+
+  return df2
+
+def get_list(data):
+  df = data.copy()
+  df['Shots'] = df['Shot on']+df['Shot off']+df['Shot Blocked']
+  df['Goals'] = df['Penalty Goal']+df['Goal']
+  df['Goals Cont.'] = df['Goals']+df['Assist']
+  df['Penalties Given'] = df['Penalty Goal']+df['Penalty Missed']
+  df['Shots - Inside Box'] = df['Shot on - Inside Box']+df['Shot off - Inside Box']+df['Shot Blocked - Inside Box']
+  df['Shots - Outside Box'] = df['Shot on - Outside Box']+df['Shot off - Outside Box']+df['Shot Blocked - Outside Box']
+  df['Goals - Inside Box'] = df['Penalty Goal']+df['Goal - Inside Box']
+  df['Goals - Open Play'] = df['Goal - Open Play']+df['Goal - Counter Attack']
+  df['Goals - Set Pieces'] = df['Goal - Set-Piece Free Kick']+df['Goal - Throw in']+df['Goal - Corner Kick']
+  df['Total Pass'] = df['Pass']+df['Pass Fail']
+  df['Chances Created'] = df['Key Pass']+df['Assist']
+  df['Crosses'] = df['Cross']+df['Cross Fail']
+  df['Dribbles'] = df['Dribble']+df['Dribble Fail']
+  df['Tackles'] = df['Tackle']+df['Tackle Fail']
+  df['Defensive Actions'] = df['Tackles']+df['Intercept']+df['Clearance']+df['Recovery']
+  df['Saves'] = df['Save']+df['Penalty Save']
+  df['Blocks'] = df['Block']+df['Block Cross']
+  df['Aerial Duels'] = df['Aerial Won']+df['Aerial Lost']
+  df['Errors'] = df['Error Goal - Error Led to Chance'] + df['Error Goal - Error Led to Goal']
+
+  jatuh = ['No','Player ID','Team ID','Position (in match)','Gameweek','Opponent','Match','Home/Away','Venue',
+           'Date','Result','Starter/Subs','Subs','Player Rating','Ball Possession','Pass Team','Kick In','Unnamed: 296','DoB',
+           'Unnamed: 297','Unnamed: 298','Unnamed: 299','Unnamed: 300','Unnamed: 301','Unnamed: 302','Unnamed: 303',
+           'Fantasy Assist','Fantasy Assist - Penalty','Fantasy Assist - Free kick','Fantasy Assist - Goal by rebound',
+           'Fantasy Assist - Own goal by pass/cross','Fantasy Assist - Own goal by rebound','Unnamed: 310','Kompetisi','Nickname',
+           'DoB','Nat. Status','Age Group']
+
+  df = df.drop(jatuh, axis=1)
+  df['Conversion Ratio'] = round(df['Goals']/df['Shots'],2)
+  df['Shot on Target Ratio'] = round(df['Shot on']/df['Shots'],2)
+  df['Successful Cross Ratio'] = round(df['Cross']/df['Crosses'],2)
+  df['Pass per Shot'] = round(df['Total Pass']/df['Shots'],2)
+  df['Pass Accuracy'] = round(df['Pass']/df['Total Pass'],2)
+  df['Aerial Won Ratio'] = round(df['Aerial Won']/df['Aerial Duels'],2)
+  df['Goal Kick Grounded Ratio'] = round(df['Goal Kick - No Sub-action']/df['Goal Kick'],2)
+  df['Long Ball Ratio'] = round(df['Pass - Long Ball']/df['Pass'],2)
+
+  metrik = list(df)
+  return metrik
+
+def get_detail(data):
+  db = data.copy()
+  import datetime as dt
+  from datetime import date
+
+  today = date.today()
+  db['Age'] = db['DoB'].apply(lambda x: today.year - x.year - ((today.month, today.day) < (x.month, x.day)))
+
+  #adding age group based on the player's age
+  def age_group(row):
+    if row['DoB'] < dt.datetime(2000,1,1):
+      return 'Senior'
+    else:
+      return 'U23'
+  db['Age Group'] = db.apply(lambda row: age_group(row), axis=1)
+
+  #adding nationality status
+  def status(row):
+    if row['Nationality'] == 'Indonesia':
+      return 'Local'
+    elif row['Nationality'] != 'Indonesia':
+      return 'Foreign'
+
+  db['Nat. Status'] = db.apply(lambda row: status(row), axis=1)
+
+  return db
+
+def data_player(data, komp, team, pos, month, venue, gw, age, nat, metrik, mins, cat, data2):
+  df = data.copy()
+  db = data2.copy()
+  gw_list = gw
+  vn_list = venue
+  mn_list = month
+  ag_list = age
+  nt_list = nat
+  ps_list = pos
+  mt_list = metrik
+  tm_list = team
+
+  df = df[df['Kompetisi']==komp]
+  df = df[df['Team'].isin(tm_list)]
+  df = df[df['Home/Away'].isin(vn_list)]
+  df = df[df['Gameweek'].isin(gw_list)]
+  df = df[df['Month'].isin(mn_list)]
+  df = df[df['Age Group'].isin(ag_list)]
+  df = df[df['Position'].isin(ps_list)]
+  df = df[df['Nat. Status'].isin(nt_list)]
+
+  df['Shots'] = df['Shot on']+df['Shot off']+df['Shot Blocked']
+  df['Goals'] = df['Penalty Goal']+df['Goal']
+  df['Goals Cont.'] = df['Goals']+df['Assist']
+  df['Penalties Given'] = df['Penalty Goal']+df['Penalty Missed']
+  df['Shots - Inside Box'] = df['Shot on - Inside Box']+df['Shot off - Inside Box']+df['Shot Blocked - Inside Box']
+  df['Shots - Outside Box'] = df['Shot on - Outside Box']+df['Shot off - Outside Box']+df['Shot Blocked - Outside Box']
+  df['Goals - Inside Box'] = df['Penalty Goal']+df['Goal - Inside Box']
+  df['Goals - Open Play'] = df['Goal - Open Play']+df['Goal - Counter Attack']
+  df['Goals - Set Pieces'] = df['Goal - Set-Piece Free Kick']+df['Goal - Throw in']+df['Goal - Corner Kick']
+  df['Total Pass'] = df['Pass']+df['Pass Fail']
+  df['Chances Created'] = df['Key Pass']+df['Assist']
+  df['Crosses'] = df['Cross']+df['Cross Fail']
+  df['Dribbles'] = df['Dribble']+df['Dribble Fail']
+  df['Tackles'] = df['Tackle']+df['Tackle Fail']
+  df['Defensive Actions'] = df['Tackles']+df['Intercept']+df['Clearance']+df['Recovery']
+  df['Saves'] = df['Save']+df['Penalty Save']
+  df['Blocks'] = df['Block']+df['Block Cross']
+  df['Aerial Duels'] = df['Aerial Won']+df['Aerial Lost']
+  df['Errors'] = df['Error Goal - Error Led to Chance'] + df['Error Goal - Error Led to Goal']
+
+  jatuh = ['No','Team ID','Player ID','Position (in match)','Gameweek','Opponent','Match','Home/Away','Venue',
+           'Date','Result','Starter/Subs','Subs','Player Rating','Ball Possession','Pass Team','Kick In','Unnamed: 296',
+           'Unnamed: 297','Unnamed: 298','Unnamed: 299','Unnamed: 300','Unnamed: 301','Unnamed: 302','Unnamed: 303',
+           'Fantasy Assist','Fantasy Assist - Penalty','Fantasy Assist - Free kick','Fantasy Assist - Goal by rebound',
+           'Fantasy Assist - Own goal by pass/cross','Fantasy Assist - Own goal by rebound','Unnamed: 310','Kompetisi',
+           'Month','Nickname','DoB','Position','Nationality','Nat. Status','Age Group','Age']
+
+  df = df.drop(jatuh, axis=1)
+  df = df.groupby(['Name','Team'], as_index=False).sum()
+  df['Conversion Ratio'] = round(df['Goals']/df['Shots'],2)
+  df['Shot on Target Ratio'] = round(df['Shot on']/df['Shots'],2)
+  df['Successful Cross Ratio'] = round(df['Cross']/df['Crosses'],2)
+  df['Pass per Shot'] = round(df['Total Pass']/df['Shots'],2)
+  df['Pass Accuracy'] = round(df['Pass']/df['Total Pass'],2)
+  df['Aerial Won Ratio'] = round(df['Aerial Won']/df['Aerial Duels'],2)
+  df['Goal Kick Grounded Ratio'] = round(df['Goal Kick - No Sub-action']/df['Goal Kick'],2)
+  df['Long Ball Ratio'] = round(df['Pass - Long Ball']/df['Pass'],2)
+
+  temp = db[['Name', 'Age', 'Position', 'Nationality']]
+  dfx = pd.merge(df, temp, on='Name', how='left')
+  datafull = dfx[dfx['MoP'] >= mins].reset_index(drop=True)
+  datafull = datafull[mt_list]
+
+  def p90_Calculator(variable_value):
+    p90_value = round((((variable_value/df['MoP']))*90),2)
+    return p90_value
+    
+  temp2 = df.drop(['Name', 'Team'], axis=1)
+  p90 = temp2.apply(p90_Calculator)
+  p90['Name'] = df['Name']
+  p90['Team'] = df['Team']
+  p90['MoP'] = df['MoP']
+  p90['Conversion Ratio'] = df['Conversion Ratio']
+  p90['Shot on Target Ratio'] = df['Shot on Target Ratio']
+  p90['Successful Cross Ratio'] = df['Successful Cross Ratio']
+  p90['Pass per Shot'] = df['Pass per Shot']
+  p90['Pass Accuracy'] = df['Pass Accuracy']
+  p90['Aerial Won Ratio'] = df['Aerial Won Ratio']
+  p90['Goal Kick Grounded Ratio'] = df['Goal Kick Grounded Ratio']
+  p90['Long Ball Ratio'] = df['Long Ball Ratio']
+
+  p902 = pd.merge(p90, temp, on='Name', how='left')
+  data90 = p902[p902['MoP'] >= mins].reset_index(drop=True)
+  data90 = data90[mt_list]
+
+  if (cat=='per 90'):
+    return data90
+  elif (cat=='Total'):
+    return datafull
