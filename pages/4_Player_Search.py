@@ -41,6 +41,13 @@ with col3:
 rank_pct = get_pct(df1, df2, mins, komp)[2]
 playlist = get_playerlist(temple, komp, pos, mins, nats, ages, arr_met)
 
-
+buffer = io.BytesIO()
+with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
+    playlist.to_excel(writer, sheet_name='Sheet1', index=False)
+download = st.download_button(
+    label="Download data as Excel",
+    data=buffer.getvalue(),
+    file_name='player-list.xlsx',
+    mime='application/vnd.ms-excel', key = 0)
 
 st.dataframe(playlist.head(10))
