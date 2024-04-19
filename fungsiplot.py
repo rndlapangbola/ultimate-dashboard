@@ -64,6 +64,14 @@ reg = fm.FontProperties(fname=f.name)
 path_eff = [path_effects.Stroke(linewidth=2, foreground='#ffffff'),
             path_effects.Normal()]
 
+hcolors = ['#ffffff', '#d5dcdc', '#acb9b9', '#839696', '#597373', '#305050', '#062d2d']
+hcmap = ListedColormap(hcolors, name="hcmap")
+hcmapr = hcmap.reversed()
+
+acolors = ['#052d2d', '#094329', '#0b5825', '#0e6e21', '#10841d', '#129919', '#15af15']
+acmap = ListedColormap(acolors, name="acmap")
+acmapr = acmap.reversed()
+
 def plot_skuad(data, data2, team, gws):
   df = data.copy()
   db = data2.copy()
