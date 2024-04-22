@@ -24,3 +24,5 @@ if all_gws:
 else:
   with col3:
     mat = st.selectbox('Select Match', ['Bali vs PSS', 'PERSIB vs Madura'], key='3')
+
+st.image("./data/poster3.jpg")
