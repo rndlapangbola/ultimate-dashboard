@@ -26,7 +26,9 @@ else:
     mat = st.selectbox('Select Match', ['Bali vs PSS', 'PERSIB vs Madura'], key='3')
 
 #st.image("./data/poster3.jpg")
-df = pd.read_json('./data/timelines_upd2024-04-222.json')
-df2 = df[df['Team']=='Bali United FC']
-df2 = df2[df2['GW']==1].reset_index(drop=True)
+df = pd.DataFrame()
+for i in range(1,11):
+  temp = pd.read_json('./data/'+i+'.json')
+  df = pd.concat([df, temp], ignore_index=True)
+df2 = df[df['Team']=='Bali United FC'].reset_index(drop=True)
 st.write(df2)
