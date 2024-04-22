@@ -27,4 +27,6 @@ else:
 
 #st.image("./data/poster3.jpg")
 df = pd.read_json('./data/timelines_upd2024-04-22.json')
-st.write(df)
+df2 = df[df['Team']=='Bali United FC']
+df2 = df2[df2['GW']==1].reset_index(drop=True)
+st.write(df2)
