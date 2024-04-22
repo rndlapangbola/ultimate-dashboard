@@ -28,7 +28,7 @@ else:
 #st.image("./data/poster3.jpg")
 df = pd.DataFrame()
 for i in range(1,11):
-  temp = pd.read_json('./data/'+i+'.json')
+  temp = pd.read_json('./data/'+str(i)+'.json')
   df = pd.concat([df, temp], ignore_index=True)
 df2 = df[df['Team']=='Bali United FC'].reset_index(drop=True)
 st.write(df2)
