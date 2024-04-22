@@ -25,4 +25,6 @@ else:
   with col3:
     mat = st.selectbox('Select Match', ['Bali vs PSS', 'PERSIB vs Madura'], key='3')
 
-st.image("./data/poster3.jpg")
+#st.image("./data/poster3.jpg")
+df = pd.read_json('./data/timelines_upd2024-04-222.json')
+st.write(df)
