@@ -37,9 +37,9 @@ else:
   away = (temp['Match'].str.split('- ').str[1])[0]
   with col1:
     ht = temp[temp['Team']==home].reset_index(drop=True)
-    vizh = st.selectbox('Select Visualization', ['Heatmap','Shots','Passes','Dribbles',
-                                                 'Tackles','Intercepts','Recoveries','Fouls',
-                                                 'Possessions Lost','Aerials'], key='4')
+    vizh = st.selectbox('Select Visualization', ['Average Position','Heatmap','Shots','Passes Attempted',
+                                                 'Passes Received','Dribbles','Tackles','Intercepts',
+                                                 'Recoveries','Fouls','Possessions Lost'], key='4')
     plah = st.selectbox('Select Player', pd.unique(ht['Act Name']), key='6')
     htp = temp[temp['Act Name']==plah].reset_index(drop=True)
     all_plah = st.checkbox('Select All Players', key='9')
