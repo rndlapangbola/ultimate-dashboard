@@ -32,14 +32,26 @@ else:
     temp = df[df['GW']==gw].reset_index(drop=True)
     mat = st.selectbox('Select Match', pd.unique(temp['Match']), key='3')
   col1, col2, col3 = st.columns(3)
+  temp = temp[temp['Match']==mat].reset_index(drop=True)
+  home = (temp['Match'].str.split(' -').str[0])[0]
+  away = (temp['Match'].str.split('- ').str[1])[0]
   with col1:
-    temp = temp[temp['Match']==mat]
-    temp = temp[temp['Team']=='Bali United FC'].reset_index(drop=True)
-    viz = st.selectbox('Select Visualization', ['Heatmap','Shots','Passes','Dribbles',
-                                                'Tackles','Intercepts','Recoveries','Fouls',
-                                                'Possessions Lost','Aerials'], key='4')
-    pla = st.selectbox('Select Player', pd.unique(temp['Act Name']), key='6')
-    vist = vizone(pla,viz,temp)
-    st.pyplot(vist)
+    ht = temp[temp['Team']==home].reset_index(drop=True)
+    vizh = st.selectbox('Select Visualization', ['Heatmap','Shots','Passes','Dribbles',
+                                                 'Tackles','Intercepts','Recoveries','Fouls',
+                                                 'Possessions Lost','Aerials'], key='4')
+    plah = st.selectbox('Select Player', pd.unique(ht['Act Name']), key='6')
+    vish = vizone(plah,vizh,ht)
+    st.pyplot(vish)
+  with col2:
+    st.write("hi")
+  with col3:
+    at = temp[temp['Team']==away].reset_index(drop=True)
+    viza = st.selectbox('Select Visualization', ['Heatmap','Shots','Passes','Dribbles',
+                                                 'Tackles','Intercepts','Recoveries','Fouls',
+                                                 'Possessions Lost','Aerials'], key='7')
+    plaa = st.selectbox('Select Player', pd.unique(at['Act Name']), key='8')
+    visa = vizone(plaa,viza,at)
+    st.pyplot(visa)
     #st.write(temp[temp['Act Name']==pla].reset_index(drop=True))
     #st.image("./data/poster3.jpg")
