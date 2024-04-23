@@ -27,22 +27,21 @@ with col2:
 if all_gws:
   with col3:
     team = st.selectbox('Select Team', pd.unique(df['Team']), key='3')
-    col1, col2 = st.columns(2)
-    with col1:
-      viz = st.selectbox('Select Visualization', ['Average Position','Heatmap','Shots','Passes Attempted',
-                                                   'Passes Received','Dribbles','Tackles','Intercepts',
-                                                   'Recoveries','Fouls','Possessions Lost'], key='11')
-    with col2:
-      pla = st.selectbox('Select Player', pd.unique(ht['Act Name']), key='12')
-      all_pla = st.checkbox('Select All Players', key='13')
-
+  col1, col2 = st.columns(2)
+  with col1:
+    viz = st.selectbox('Select Visualization', ['Average Position','Heatmap','Shots','Passes Attempted',
+                                                'Passes Received','Dribbles','Tackles','Intercepts',
+                                                'Recoveries','Fouls','Possessions Lost'], key='11')
+  with col2:
     temp = df[df['Team']==team]
+    pla = st.selectbox('Select Player', pd.unique(temp['Act Name']), key='12')
+    all_pla = st.checkbox('Select All Players', key='13')
     templa = temp[temp['Act Name']==pla].reset_index(drop=True)
-    if all_pla:
-      vis = vizone(viz,temp)
-    else:
-      vis = vizone(viz,templa)
-    st.pyplot(vis)
+  if all_pla:
+    vis = vizone(viz,temp)
+  else:
+    vis = vizone(viz,templa)
+  st.pyplot(vis)
 else:
   with col3:
     temp = df[df['GW']==gw].reset_index(drop=True)
