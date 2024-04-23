@@ -40,6 +40,6 @@ else:
                                                 'Possessions Lost','Aerials'], key='4')
     pla = st.selectbox('Select Player', pd.unique(temp['Act Name']), key='6')
     vist = vizone(pla,viz,temp)
-    
+    st.pyplot(vist)
     #st.write(temp[temp['Act Name']==pla].reset_index(drop=True))
     #st.image("./data/poster3.jpg")
