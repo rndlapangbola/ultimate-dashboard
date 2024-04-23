@@ -8,6 +8,8 @@ import openpyxl, yattag
 from openpyxl import load_workbook
 from yattag import Doc, indent
 
+from fungsiplot import plot_compare
+
 st.set_page_config(page_title='Match Center', layout='wide')
 st.markdown('# Match Center')
 
@@ -29,13 +31,14 @@ else:
   with col3:
     temp = df[df['GW']==gw].reset_index(drop=True)
     mat = st.selectbox('Select Match', pd.unique(temp['Match']), key='3')
-col1, col2, col3 = st.columns(3)
-with col1:
-  temp = temp[temp['Match']==mat]
-  temp = temp[temp['Team']=='Bali United FC'].reset_index(drop=True)
-  viz = st.selectbox('Select Visualization', ['Heatmap','Shots','Passes','Dribbles',
-                                              'Tackles','Intercepts','Recoveries','Fouls',
-                                              'Possessions Lost','Aerials'], key='4')
-  pla = st.selectbox('Select Player', pd.unique(temp['Act Name']), key='6')
-  st.write(temp[temp['Act Name']==pla].reset_index(drop=True))
+  col1, col2, col3 = st.columns(3)
+  with col1:
+    temp = temp[temp['Match']==mat]
+    temp = temp[temp['Team']=='Bali United FC'].reset_index(drop=True)
+    viz = st.selectbox('Select Visualization', ['Heatmap','Shots','Passes','Dribbles',
+                                                'Tackles','Intercepts','Recoveries','Fouls',
+                                                'Possessions Lost','Aerials'], key='4')
+    pla = st.selectbox('Select Player', pd.unique(temp['Act Name']), key='6')
+    fin = temp[temp['Act Name']==pla].reset_index(drop=True)
+    st.write(temp[temp['Act Name']==pla].reset_index(drop=True))
 #st.image("./data/poster3.jpg")
