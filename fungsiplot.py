@@ -573,11 +573,11 @@ def plot_PN(data, min_pass, team, min_min, max_min, match, gw):
   
   return fig
 
-def vizone(player, kind, data):
+def vizone(kind, data):
   df = data.copy()
   df = df[df['Act Zone'].notna()].reset_index(drop=True)
 
-  if (kind=='Passes'):
+  if (kind=='Passes Attempted'):
     dx = df[(df['Action']=='passing') | (df['Action']=='pass failed')].reset_index(drop=True)
   elif (kind=='Dribbles'):
     dx = df[(df['Action']=='dribble success') | (df['Action']=='dribble failed')].reset_index(drop=True)
@@ -593,8 +593,6 @@ def vizone(player, kind, data):
     dx = df[(df['Action']=='foul')].reset_index(drop=True)
   elif (kind=='Possessions Lost'):
     dx = df[(df['Action']=='loose ball')].reset_index(drop=True)
-  elif (kind=='Aerials'):
-    dx = df[(df['Action']=='header') | (df['Action']=='header failed')].reset_index(drop=True)
   elif (kind=='Heatmap'):
     dx = df.copy()
 
@@ -606,7 +604,7 @@ def vizone(player, kind, data):
   dx['X'] = dx['X'].replace({'1':8.34,'2':25.34,'3':42.34,
                              '4':59.34,'5':76.34,'6':93.34})
   dx = dx[['Act Name','Team','Action','X','Y']]
-  dx = dx[dx['Act Name']==player].reset_index(drop=True)
+  #dx = dx[dx['Act Name']==player].reset_index(drop=True)
 
   fig, ax = plt.subplots(figsize=(20, 20), dpi=500)
   fig.patch.set_facecolor('#ffffff')
