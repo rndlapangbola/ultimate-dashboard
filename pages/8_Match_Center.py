@@ -4,16 +4,6 @@ import numpy as np
 import streamlit as st
 import io
 
-from tempfile import NamedTemporaryFile
-import urllib
-
-import matplotlib.pyplot as plt
-import matplotlib.patheffects as path_effects
-import matplotlib.patches as patches
-from matplotlib.offsetbox import (OffsetImage, AnnotationBbox)
-import matplotlib.font_manager as fm
-from matplotlib.patches import FancyBboxPatch
-
 import openpyxl, yattag
 from openpyxl import load_workbook
 from yattag import Doc, indent
@@ -49,6 +39,7 @@ else:
                                                 'Tackles','Intercepts','Recoveries','Fouls',
                                                 'Possessions Lost','Aerials'], key='4')
     pla = st.selectbox('Select Player', pd.unique(temp['Act Name']), key='6')
-    fin = temp[temp['Act Name']==pla].reset_index(drop=True)
-    st.write(temp[temp['Act Name']==pla].reset_index(drop=True))
-#st.image("./data/poster3.jpg")
+    vist = vizone(pla,viz,temp)
+    
+    #st.write(temp[temp['Act Name']==pla].reset_index(drop=True))
+    #st.image("./data/poster3.jpg")
