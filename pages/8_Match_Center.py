@@ -41,17 +41,27 @@ else:
                                                  'Tackles','Intercepts','Recoveries','Fouls',
                                                  'Possessions Lost','Aerials'], key='4')
     plah = st.selectbox('Select Player', pd.unique(ht['Act Name']), key='6')
-    vish = vizone(plah,vizh,ht)
-    st.pyplot(vish)
+    htp = temp[temp['Act Name']==plah].reset_index(drop=True)
+    all_plah = st.checkbox('Select All Players', key='9')
+    if all_plah:
+      vish = vizone(vizh,ht)
+    else:
+      vish = vizone(vizh,htp)
+    st.pyplot(vish)    
   with col2:
     st.write("hi")
   with col3:
     at = temp[temp['Team']==away].reset_index(drop=True)
-    viza = st.selectbox('Select Visualization', ['Heatmap','Shots','Passes','Dribbles',
-                                                 'Tackles','Intercepts','Recoveries','Fouls',
-                                                 'Possessions Lost','Aerials'], key='7')
+    viza = st.selectbox('Select Visualization', ['Average Position','Heatmap','Shots','Passes Attempted',
+                                                 'Passes Received','Dribbles','Tackles','Intercepts',
+                                                 'Recoveries','Fouls','Possessions Lost'], key='7')
     plaa = st.selectbox('Select Player', pd.unique(at['Act Name']), key='8')
-    visa = vizone(plaa,viza,at)
+    atp = temp[temp['Act Name']==plaa].reset_index(drop=True)
+    all_plaa = st.checkbox('Select All Players', key='10')
+    if all_plaa:
+      visa = vizone(viza,at)
+    else:
+      visa = vizone(viza,atp)
     st.pyplot(visa)
     #st.write(temp[temp['Act Name']==pla].reset_index(drop=True))
     #st.image("./data/poster3.jpg")
