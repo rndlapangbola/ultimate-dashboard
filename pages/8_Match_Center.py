@@ -8,7 +8,7 @@ import openpyxl, yattag
 from openpyxl import load_workbook
 from yattag import Doc, indent
 
-from fungsiplot import plot_compare
+from fungsiplot import vizone
 
 st.set_page_config(page_title='Match Center', layout='wide')
 st.markdown('# Match Center')
