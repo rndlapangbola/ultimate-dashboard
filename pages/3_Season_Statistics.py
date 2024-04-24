@@ -16,9 +16,6 @@ from listfungsi import milestone
 st.set_page_config(page_title='Full Season Statistics', layout='wide')
 st.markdown('# Statistics')
 
-from menu import menu
-menu()
-
 @st.cache_data(ttl=600)
 def load_data(sheets_url):
     xlsx_url = sheets_url.replace("/edit#gid=", "/export?format=xlsx&gid=")
@@ -203,3 +200,6 @@ with players:
         file_name='player-data_downloaded ('+date+').xlsx',
         mime='application/vnd.ms-excel', key = 1)
     st.write(show_player_data)
+
+from menu import menu
+menu()
