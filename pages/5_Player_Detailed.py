@@ -23,11 +23,11 @@ from listfungsi import get_detail
 from listfungsi import get_radar
 from listfungsi import get_simi
 from listfungsi import get_pct
-from menu import menu
 
 st.set_page_config(page_title='Player Detailed', layout='wide')
 st.markdown('# Player Detailed')
 
+from menu import menu
 menu()
 
 @st.cache_data(ttl=600)
