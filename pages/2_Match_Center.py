@@ -11,10 +11,10 @@ from yattag import Doc, indent
 from fungsiplot import vizone
 from menu import menu
 
-menu()
-
 st.set_page_config(page_title='Match Center', layout='wide')
 st.markdown('# Match Center')
+
+menu()
 
 df = pd.DataFrame()
 for i in range(1,11):
