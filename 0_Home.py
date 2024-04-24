@@ -15,8 +15,8 @@ actual_password = "rndlapangbola24"
 
 # Insert a form in the container
 with placeholder.form("login"):
-    st.markdown("#### Enter your credentials")
-    email = st.text_input("Email")
+    st.markdown("#### Halo! Selamat datang kembali.")
+    email = st.text_input("Username")
     password = st.text_input("Password", type="password")
     c = datetime.now()
     waktus = c.strftime('%H:%M:%S')
