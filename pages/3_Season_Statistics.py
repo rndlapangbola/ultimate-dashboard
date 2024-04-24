@@ -14,10 +14,10 @@ from listfungsi import get_cs
 from listfungsi import milestone
 from menu import menu
 
-menu()
-
 st.set_page_config(page_title='Full Season Statistics', layout='wide')
 st.markdown('# Statistics')
+
+menu()
 
 @st.cache_data(ttl=600)
 def load_data(sheets_url):
