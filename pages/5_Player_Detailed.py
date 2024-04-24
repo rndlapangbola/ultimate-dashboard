@@ -25,10 +25,10 @@ from listfungsi import get_simi
 from listfungsi import get_pct
 from menu import menu
 
-menu()
-
 st.set_page_config(page_title='Player Detailed', layout='wide')
 st.markdown('# Player Detailed')
+
+menu()
 
 @st.cache_data(ttl=600)
 def load_data(sheets_url):
