@@ -9,6 +9,9 @@ import urllib
 from listfungsi import get_detail
 from listfungsi import get_pct
 from listfungsi import get_playerlist
+from menu import menu
+
+menu()
 
 st.set_page_config(page_title='Player Search', layout='wide')
 st.markdown('# Search')
