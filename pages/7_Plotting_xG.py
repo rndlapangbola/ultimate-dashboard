@@ -16,6 +16,9 @@ from matplotlib.patches import FancyBboxPatch
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
 from sklearn import preprocessing
+from menu import menu
+
+menu()
 
 st.set_page_config(page_title='xG Plot', layout='wide')
 st.markdown('# Plotting Expected Goals')
