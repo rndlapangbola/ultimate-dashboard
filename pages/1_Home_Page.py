@@ -1,8 +1,6 @@
 import streamlit as st
 from menu import menu
 
-menu()
-
 def run():
     st.set_page_config(
         page_title="Home Page",
@@ -39,3 +37,4 @@ def run():
 
 if __name__ == "__main__":
     run()
+menu()
