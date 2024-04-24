@@ -9,6 +9,9 @@ st.markdown('# Plotting Passing Network')
 sys.path.append("listfungsi.py")
 from listfungsi import get_PNdata
 from fungsiplot import plot_PN
+from menu import menu
+
+menu()
 
 with st.expander("BACA INI DULU."):
     st.write("Upload file timeline yang telah selesai di-QC!")
