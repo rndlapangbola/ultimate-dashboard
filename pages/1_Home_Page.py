@@ -1,4 +1,7 @@
 import streamlit as st
+from menu import menu
+
+menu()
 
 def run():
     st.set_page_config(
