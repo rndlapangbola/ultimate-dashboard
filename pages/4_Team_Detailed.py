@@ -25,6 +25,9 @@ from listfungsi import get_pssw
 from listfungsi import get_wdl
 from listfungsi import get_skuad
 from listfungsi import get_formasi
+from menu import menu
+
+menu()
 
 st.set_page_config(page_title='Team Detailed', layout='wide')
 st.markdown('# Team Detailed')
