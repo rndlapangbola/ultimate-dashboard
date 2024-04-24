@@ -9,3 +9,4 @@ openpyxl
 yellowbrick==1.4
 yattag
 xlsxwriter
+st-supabase-connection
