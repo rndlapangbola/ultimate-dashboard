@@ -27,10 +27,10 @@ from listfungsi import get_skuad
 from listfungsi import get_formasi
 from menu import menu
 
-menu()
-
 st.set_page_config(page_title='Team Detailed', layout='wide')
 st.markdown('# Team Detailed')
+
+menu()
 
 @st.cache_data(ttl=600)
 def load_data(sheets_url):
