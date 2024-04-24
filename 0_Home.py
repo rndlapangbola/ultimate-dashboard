@@ -1,38 +1,37 @@
 import streamlit as st
+from menu import authenticated_menu, home_menu
+import openpyxl
+from openpyxl import load_workbook
+from datetime import datetime
+from st_supabase_connection import SupabaseConnection
 
-def run():
-    st.set_page_config(
-        page_title="Home Page",
-    )
+conn = st.connection("supabase",type=SupabaseConnection)
 
-    st.write("# Selamat datang di Dashboard Lapangbola! 👋")
+# Create an empty container
+placeholder = st.empty()
 
-    st.markdown(
-        """
-        Dashboard ini dibuat oleh **Prana dari R&D Lapangbola** untuk mempermudah akses 
-        data-data yang telah diolah baik untuk konten maupun laporan ke LIB serta 
-        dapat dipergunakan untuk plotting (xG map, passing network, dll).
-        **👈 Pilih fitur pada sidebar** untuk melihat dan 
-        menggunakan fitur-fitur dashboard ini.
+#actual_email = "email"
+actual_password = "rndlapangbola24"
 
-        ### Fitur:
-        - **Season Statistics**: Berisi milestones tim di Liga 1 serta statistik tim dan pemain di musim ini.
-        - **Team Detailed**: Berisi statistik dan visualisasi data tim secara lebih detail.
-        - **Player Detailed**: Berisi statistik dan visualisasi data pemain secara lebih detail.
-        - **Player Search**: Untuk membuat list pemain terbaik sesuai kriteria yang dibutuhkan.
-        - **Plotting xG**: Untuk plotting xG map dan assist/key pass map.
-        - **Plotting Passing Network**: Untuk plotting passing network.
-        - **Excel-to-XML Converter**: Untuk mengkonversi file timeline (.xlsx) ke format XML untuk video tagging.
-        - ***Coming Soon***
-        
-        ### Terima kasih kepada:
-        - Kang Dani dan Dzikry,
-        - Tim Operasional,
-        - Tim Konten,
-        - Serta seluruh elemen Lapangbola.
-    """
-    )
+# Insert a form in the container
+with placeholder.form("login"):
+    st.markdown("#### Enter your credentials")
+    email = st.text_input("Email")
+    password = st.text_input("Password", type="password")
+    c = datetime.now()
+    waktus = c.strftime('%H:%M:%S')
+    tanggals = c.strftime('%Y-%m-%d')
+    submit = st.form_submit_button("Login")
 
-
-if __name__ == "__main__":
-    run()
+if submit and password == actual_password:
+    # If the form is submitted and the email and password are correct,
+    # clear the form/container and display a success message
+    placeholder.empty()
+    conn.table("mytable").insert([{"name":email, "pword":password, 'waktu':waktus, 'tanggal':tanggals}], count="None").execute()
+    home_menu()
+    st.success("Login successful")
+    #authenticated_menu()
+elif submit and password != actual_password:
+    st.error("Login failed")
+else:
+    pass
