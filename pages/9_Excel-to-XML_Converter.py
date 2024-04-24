@@ -7,12 +7,12 @@ import io
 import openpyxl, yattag
 from openpyxl import load_workbook
 from yattag import Doc, indent
-from menu import menu
-
-menu()
 
 st.set_page_config(page_title='Excel-to-XML Converter', layout='wide')
 st.markdown('# Excel-to-XML Converter')
+
+from menu import menu
+menu()
 
 sys.path.append("listfungsi.py")
 from listfungsi import res_data
