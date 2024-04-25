@@ -41,7 +41,7 @@ def run():
 if __name__ == "__main__":
     run()
 
-st.markdown('### User Counter:')
+st.markdown('### User counter:')
 
 # Initialize connection.
 conn = st.connection("supabase",type=SupabaseConnection)
