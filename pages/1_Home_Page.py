@@ -1,4 +1,7 @@
 import streamlit as st
+from st_supabase_connection import SupabaseConnection
+import pandas as pd
+from datetime import date, timedelta
 
 def run():
     st.set_page_config(
@@ -36,5 +39,29 @@ def run():
 
 if __name__ == "__main__":
     run()
+
+# Initialize connection.
+conn = st.connection("supabase",type=SupabaseConnection)
+
+# Perform query.
+rows = conn.query("*", table="mytable", ttl="10m").execute()
+df = pd.DataFrame(rows.data)
+
+df['tanggal'] = pd.to_datetime(df['tanggal'])
+df['waktu'] = pd.to_datetime(df['waktu'])
+
+temp = df[['tanggal','name']].rename(columns={'tanggal':'date','name':'access count'})
+temp['date'] = temp['date'].dt.strftime('%d/%m/%Y')
+temp = temp.groupby(['date'], as_index=False).count()
+st.line_chart(temp, x="date", y="access count")
+
+us = df['name'][len(df)-1]
+tg = str((df['tanggal'][len(df)-1]).strftime("%d/%m/%Y"))
+wts = (df['waktu'][len(df)-1])
+jkt = wts + timedelta(hours=7)
+wt = str(jkt.strftime("%X"))
+
+st.write('Last accessed by '+us+' on '+tg+' at '+wt+' WIB')
+
 from menu import menu
 menu()
