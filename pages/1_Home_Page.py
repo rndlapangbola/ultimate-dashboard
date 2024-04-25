@@ -19,6 +19,7 @@ def run():
         menggunakan fitur-fitur dashboard ini.
 
         ### Fitur:
+        - **Match Center**: Berisi statistik dan visualisasi data seluruh pertandingan Liga 1 (Liga 2 menyusul).
         - **Season Statistics**: Berisi milestones tim di Liga 1 serta statistik tim dan pemain di musim ini.
         - **Team Detailed**: Berisi statistik dan visualisasi data tim secara lebih detail.
         - **Player Detailed**: Berisi statistik dan visualisasi data pemain secara lebih detail.
@@ -40,7 +41,7 @@ def run():
 if __name__ == "__main__":
     run()
 
-st.markdown('### User Counter')
+st.markdown('### User Counter:')
 
 # Initialize connection.
 conn = st.connection("supabase",type=SupabaseConnection)
