@@ -56,7 +56,7 @@ df['waktu'] = pd.to_datetime(df['waktu'])
 temp = df[['tanggal','name']].rename(columns={'tanggal':'date','name':'access count'})
 temp['date'] = temp['date'].dt.strftime('%d/%m/%Y')
 temp = temp.groupby(['date'], as_index=False).count()
-st.bar_chart(temp, x="date", y="access count", width=2.5)
+st.bar_chart(temp, x="date", y="access count", width=0.5)
 
 us = df['name'][len(df)-1]
 tg = str((df['tanggal'][len(df)-1]).strftime("%d/%m/%Y"))
