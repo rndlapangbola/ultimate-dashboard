@@ -2,7 +2,7 @@ import streamlit as st
 from streamlit_image_coordinates import streamlit_image_coordinates
 import pandas as pd
 
-st.set_page_config(page_title='Event Tagger', layout='centre')
+st.set_page_config(page_title='Event Tagger', layout='centered')
 st.markdown('# Event Tagger')
 
 from menu import menu
