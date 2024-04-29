@@ -14,7 +14,7 @@ if 'coor' not in st.session_state:
 xval = 617.6470588235249
 yval = 400
 
-value = streamlit_image_coordinates('./data/lapangkosong4.jpg', width=xval, height=yval, key="local",)
+value = streamlit_image_coordinates('./data/Lapangkosong.jpg', width=xval, height=yval, key="local",)
 
 if value is not None:
   coor = value['x'], value['y']
