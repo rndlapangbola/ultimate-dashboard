@@ -37,7 +37,7 @@ if all_gws:
                                                 'Recoveries','Fouls','Possessions Lost'], key='11')
   with col2:
     temp = df[df['Team']==team]
-    if (viz=='Pass Received'):
+    if (viz=='Passes Received'):
       pla = st.selectbox('Select Player', pd.unique(temp['Pas Name']), key='12')
       templa = temp[temp['Pas Name']==pla].reset_index(drop=True)
     else:
@@ -62,7 +62,7 @@ else:
     vizh = st.selectbox('Select Visualization', ['Heatmap','Shots','Passes Attempted','Average Position',
                                                  'Passes Received','Dribbles','Tackles','Intercepts',
                                                  'Recoveries','Fouls','Possessions Lost'], key='4')
-    if (vizh=='Pass Received'):
+    if (vizh=='Passes Received'):
       plah = st.selectbox('Select Player', pd.unique(ht['Pas Name']), key='6')
       htp = temp[temp['Pas Name']==plah].reset_index(drop=True)
     else:
@@ -81,7 +81,7 @@ else:
     viza = st.selectbox('Select Visualization', ['Heatmap','Shots','Passes Attempted','Average Position',
                                                  'Passes Received','Dribbles','Tackles','Intercepts',
                                                  'Recoveries','Fouls','Possessions Lost'], key='7')
-    if (viza=='Pass Received'):
+    if (viza=='Passes Received'):
       plaa = st.selectbox('Select Player', pd.unique(at['Pas Name']), key='8')
       atp = temp[temp['Pas Name']==plaa].reset_index(drop=True)
     else:
