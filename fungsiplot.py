@@ -575,10 +575,17 @@ def plot_PN(data, min_pass, team, min_min, max_min, match, gw):
 
 def vizone(kind, data):
   df = data.copy()
-
   if (kind=='Passes Received'):
     df = df[df['Pas Zone'].notna()].reset_index(drop=True)
-    dx = df[(df['Action']=='passing') | (df['Action']=='pass failed')].rename(columns={'Pas Name':'Act Name','Pas Zone':'Act Zone'}).reset_index(drop=True)
+    dx = df[df['Action']=='passing'].reset_index(drop=True)
+    dx = dx[['Pas Name', 'Action', 'Team', 'Pas Zone']].rename(columns={'Pas Name':'Act Name','Pas Zone':'Act Zone'})
+    temp = dx['Act Zone'].apply(lambda x: pd.Series(list(x)))
+    dx['X'] = temp[0]
+    dx['Y'] = temp[1]
+    dx['Y'] = dx['Y'].replace({'A':10,'B':30,'C':50,'D':70,'E':90})
+    dx['X'] = dx['X'].replace({'1':8.34,'2':25.34,'3':42.34,
+                               '4':59.34,'5':76.34,'6':93.34})
+    dx = dx[['Act Name','Team','Action','X','Y']]
   else:
     df = df[df['Act Zone'].notna()].reset_index(drop=True)
     if (kind=='Passes Attempted'):
@@ -599,14 +606,14 @@ def vizone(kind, data):
       dx = df[(df['Action']=='loose ball')].reset_index(drop=True)
     elif (kind=='Heatmap'):
       dx = df.copy()
-  dx = dx[['Act Name', 'Action', 'Team', 'Act Zone']]
-  temp = dx['Act Zone'].apply(lambda x: pd.Series(list(x)))
-  dx['X'] = temp[0]
-  dx['Y'] = temp[1]
-  dx['Y'] = dx['Y'].replace({'A':10,'B':30,'C':50,'D':70,'E':90})
-  dx['X'] = dx['X'].replace({'1':8.34,'2':25.34,'3':42.34,
-                             '4':59.34,'5':76.34,'6':93.34})
-  dx = dx[['Act Name','Team','Action','X','Y']]
+    dx = dx[['Act Name', 'Action', 'Team', 'Act Zone']]
+    temp = dx['Act Zone'].apply(lambda x: pd.Series(list(x)))
+    dx['X'] = temp[0]
+    dx['Y'] = temp[1]
+    dx['Y'] = dx['Y'].replace({'A':10,'B':30,'C':50,'D':70,'E':90})
+    dx['X'] = dx['X'].replace({'1':8.34,'2':25.34,'3':42.34,
+                               '4':59.34,'5':76.34,'6':93.34})
+    dx = dx[['Act Name','Team','Action','X','Y']]
   #dx = dx[dx['Act Name']==player].reset_index(drop=True)
 
   fig, ax = plt.subplots(figsize=(20, 20), dpi=500)
