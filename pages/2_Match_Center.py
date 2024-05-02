@@ -121,7 +121,7 @@ else:
       vxga = tendang(xga)
     if (viza=='Shots'):
       st.pyplot(vxga)
-    else
+    else:
       st.pyplot(visa)
     #st.write(temp[temp['Act Name']==pla].reset_index(drop=True))
     #st.image("./data/poster3.jpg")
