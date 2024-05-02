@@ -575,30 +575,27 @@ def plot_PN(data, min_pass, team, min_min, max_min, match, gw):
 
 def vizone(kind, data):
   df = data.copy()
+  df = df[df['Act Zone'].notna()].reset_index(drop=True)
 
-  if (kind=='Pass Received'):
-    df = df[df['Pas Zone'].notna()].reset_index(drop=True)
-    dx = df[(df['Action']=='passing') | (df['Action']=='pass failed')].rename(columns={'Pas Name':'Act Name','Pas Zone':'Act Zone'}).reset_index(drop=True)
-  else:
-    df = df[df['Act Zone'].notna()].reset_index(drop=True)
-    if (kind=='Passes Attempted'):
-      dx = df[(df['Action']=='passing') | (df['Action']=='pass failed')].reset_index(drop=True)
-    elif (kind=='Dribbles'):
-      dx = df[(df['Action']=='dribble success') | (df['Action']=='dribble failed')].reset_index(drop=True)
-    elif (kind=='Tackles'):
-      dx = df[(df['Action']=='tackle') | (df['Action']=='tackle failed')].reset_index(drop=True)
-    elif (kind=='Intercepts'):
-      dx = df[(df['Action']=='intercept') | (df['Action']=='intercept failed')].reset_index(drop=True)
-    elif (kind=='Recoveries'):
-      dx = df[(df['Action']=='recovery ball')].reset_index(drop=True)
-    elif (kind=='Clearances'):
-      dx = df[(df['Action']=='clearance')].reset_index(drop=True)
-    elif (kind=='Fouls'):
-      dx = df[(df['Action']=='foul')].reset_index(drop=True)
-    elif (kind=='Possessions Lost'):
-      dx = df[(df['Action']=='loose ball')].reset_index(drop=True)
-    elif (kind=='Heatmap'):
-      dx = df.copy()
+  if (kind=='Passes Attempted'):
+    dx = df[(df['Action']=='passing') | (df['Action']=='pass failed')].reset_index(drop=True)
+  elif (kind=='Dribbles'):
+    dx = df[(df['Action']=='dribble success') | (df['Action']=='dribble failed')].reset_index(drop=True)
+  elif (kind=='Tackles'):
+    dx = df[(df['Action']=='tackle') | (df['Action']=='tackle failed')].reset_index(drop=True)
+  elif (kind=='Intercepts'):
+    dx = df[(df['Action']=='intercept') | (df['Action']=='intercept failed')].reset_index(drop=True)
+  elif (kind=='Recoveries'):
+    dx = df[(df['Action']=='recovery ball')].reset_index(drop=True)
+  elif (kind=='Clearances'):
+    dx = df[(df['Action']=='clearance')].reset_index(drop=True)
+  elif (kind=='Fouls'):
+    dx = df[(df['Action']=='foul')].reset_index(drop=True)
+  elif (kind=='Possessions Lost'):
+    dx = df[(df['Action']=='loose ball')].reset_index(drop=True)
+  elif (kind=='Heatmap'):
+    dx = df.copy()
+
   dx = dx[['Act Name', 'Action', 'Team', 'Act Zone']]
   temp = dx['Act Zone'].apply(lambda x: pd.Series(list(x)))
   dx['X'] = temp[0]
