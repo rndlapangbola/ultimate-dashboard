@@ -693,11 +693,6 @@ def tendang(data):
                 textcoords='offset points', color='black', ha='left',
                 zorder=9, va='center', fontproperties=bold)
 
-  ax.add_patch(FancyBboxPatch((0.65, 50.5), 45, 1.35, fc='#cbfd06', ec='#cbfd06', lw=2))
-  ax.annotate(text=df_player['Player'][0], size=26, xy=(1, 52), xytext=(0,-18),
-              textcoords='offset points', color='black', ha='left',
-              zorder=9, va='center', fontproperties=bold)
-
   ax.annotate(text='-Nilai xG->', size=21, xy=(87, 54), xytext=(0,-18),
               textcoords='offset points', color='black', ha='left',
               zorder=9, va='center', fontproperties=bold, path_effects=path_eff)
@@ -773,11 +768,6 @@ def ttendang(data):
     ax.annotate(text=s, size=24, xy=(x+2.5, 49), xytext=(0,-18),
                 textcoords='offset points', color='black', ha='left',
                 zorder=9, va='center', fontproperties=bold)
-
-  ax.add_patch(FancyBboxPatch((0.65, 50.5), 35, 1.35, fc='#cbfd06', ec='#cbfd06', lw=2))
-  ax.annotate(text=df_team['Team'][0], size=26, xy=(1, 52), xytext=(0,-18),
-              textcoords='offset points', color='black', ha='left',
-              zorder=9, va='center', fontproperties=bold) ##TEAM
 
   ax.annotate(text='-Nilai xGA->', size=21, xy=(87, 54), xytext=(0,-18),
               textcoords='offset points', color='black', ha='left',
