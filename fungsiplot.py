@@ -575,29 +575,27 @@ def plot_PN(data, min_pass, team, min_min, max_min, match, gw):
 
 def vizone(kind, data):
   df = data.copy()
-  if (kind=='Pass Received'):
-    df1 = df[df['Pas Zone'].notna()].reset_index(drop=True)
-    dx = df1[(df1['Action']=='passing') | (df1['Action']=='pass failed')].rename(columns={'Pas Name':'Act Name','Pas Zone':'Act Zone'}).reset_index(drop=True)
-  else:
-    df1 = df[df['Act Zone'].notna()].reset_index(drop=True)
-    if (kind=='Passes Attempted'):
-      dx = df1[(df1['Action']=='passing') | (df1['Action']=='pass failed')].reset_index(drop=True)
-    elif (kind=='Dribbles'):
-      dx = df1[(df1['Action']=='dribble success') | (df1['Action']=='dribble failed')].reset_index(drop=True)
-    elif (kind=='Tackles'):
-      dx = df1[(df1['Action']=='tackle') | (df1['Action']=='tackle failed')].reset_index(drop=True)
-    elif (kind=='Intercepts'):
-      dx = df1[(df1['Action']=='intercept') | (df1['Action']=='intercept failed')].reset_index(drop=True)
-    elif (kind=='Recoveries'):
-      dx = df1[(df1['Action']=='recovery ball')].reset_index(drop=True)
-    elif (kind=='Clearances'):
-      dx = df1[(df1['Action']=='clearance')].reset_index(drop=True)
-    elif (kind=='Fouls'):
-      dx = df1[(df1['Action']=='foul')].reset_index(drop=True)
-    elif (kind=='Possessions Lost'):
-      dx = df1[(df1['Action']=='loose ball')].reset_index(drop=True)
-    elif (kind=='Heatmap'):
-      dx = df1.copy()
+  df = df[df['Act Zone'].notna()].reset_index(drop=True)
+
+  if (kind=='Passes Attempted'):
+    dx = df[(df['Action']=='passing') | (df['Action']=='pass failed')].reset_index(drop=True)
+  elif (kind=='Dribbles'):
+    dx = df[(df['Action']=='dribble success') | (df['Action']=='dribble failed')].reset_index(drop=True)
+  elif (kind=='Tackles'):
+    dx = df[(df['Action']=='tackle') | (df['Action']=='tackle failed')].reset_index(drop=True)
+  elif (kind=='Intercepts'):
+    dx = df[(df['Action']=='intercept') | (df['Action']=='intercept failed')].reset_index(drop=True)
+  elif (kind=='Recoveries'):
+    dx = df[(df['Action']=='recovery ball')].reset_index(drop=True)
+  elif (kind=='Clearances'):
+    dx = df[(df['Action']=='clearance')].reset_index(drop=True)
+  elif (kind=='Fouls'):
+    dx = df[(df['Action']=='foul')].reset_index(drop=True)
+  elif (kind=='Possessions Lost'):
+    dx = df[(df['Action']=='loose ball')].reset_index(drop=True)
+  elif (kind=='Heatmap'):
+    dx = df.copy()
+
   dx = dx[['Act Name', 'Action', 'Team', 'Act Zone']]
   temp = dx['Act Zone'].apply(lambda x: pd.Series(list(x)))
   dx['X'] = temp[0]
@@ -606,6 +604,36 @@ def vizone(kind, data):
   dx['X'] = dx['X'].replace({'1':8.34,'2':25.34,'3':42.34,
                              '4':59.34,'5':76.34,'6':93.34})
   dx = dx[['Act Name','Team','Action','X','Y']]
+  #dx = dx[dx['Act Name']==player].reset_index(drop=True)
+
+  fig, ax = plt.subplots(figsize=(20, 20), dpi=500)
+  fig.patch.set_facecolor('#ffffff')
+  ax.set_facecolor('#ffffff')
+  pitch = Pitch(pitch_type='wyscout', pitch_color='#ffffff', line_color='#000000', line_zorder=2,
+                corner_arcs=True, goal_type='box', linewidth=3.5)
+  pitch.draw(ax=ax)
+
+  bin_statistic = pitch.bin_statistic(dx.X, dx.Y, statistic='count', bins=(6, 5), normalize=True)
+  pitch.heatmap(bin_statistic, ax=ax, cmap='Greens', edgecolor='#ffffff', lw=0)
+  labels = pitch.label_heatmap(bin_statistic, color='#ffffff', fontsize=22, fontproperties=bold,
+                               ax=ax, ha='center', va='center', str_format='{:.0%}')
+
+  return fig
+
+def vizone_pr(data):
+  df = data.copy()
+  df = df[df['Pas Zone'].notna()].reset_index(drop=True)
+
+  dx = df[(df['Action']=='passing') | (df['Action']=='pass failed')].reset_index(drop=True)
+
+  dx = dx[['Pas Name', 'Action', 'Team', 'Pas Zone']]
+  temp = dx['Pas Zone'].apply(lambda x: pd.Series(list(x)))
+  dx['X'] = temp[0]
+  dx['Y'] = temp[1]
+  dx['Y'] = dx['Y'].replace({'A':10,'B':30,'C':50,'D':70,'E':90})
+  dx['X'] = dx['X'].replace({'1':8.34,'2':25.34,'3':42.34,
+                             '4':59.34,'5':76.34,'6':93.34})
+  dx = dx[['Pas Name','Team','Action','X','Y']]
   #dx = dx[dx['Act Name']==player].reset_index(drop=True)
 
   fig, ax = plt.subplots(figsize=(20, 20), dpi=500)
