@@ -578,8 +578,7 @@ def vizone(kind, data):
 
   if (kind=='Pass Received'):
     df = df[df['Pas Zone'].notna()].reset_index(drop=True)
-    dx = df[(df['Action']=='passing') | (df['Action']=='pass failed')].reset_index(drop=True)
-    dx = dx[['Pas Name', 'Action', 'Team', 'Pas Zone']].rename(columns={'Pas Name':'Act Name','Pas Zone':'Act Zone'})
+    dx = df[(df['Action']=='passing') | (df['Action']=='pass failed')].rename(columns={'Pas Name':'Act Name','Pas Zone':'Act Zone'}).reset_index(drop=True)
   else:
     df = df[df['Act Zone'].notna()].reset_index(drop=True)
     if (kind=='Passes Attempted'):
@@ -600,7 +599,7 @@ def vizone(kind, data):
       dx = df[(df['Action']=='loose ball')].reset_index(drop=True)
     elif (kind=='Heatmap'):
       dx = df.copy()
-    dx = dx[['Act Name', 'Action', 'Team', 'Act Zone']]
+  dx = dx[['Act Name', 'Action', 'Team', 'Act Zone']]
   temp = dx['Act Zone'].apply(lambda x: pd.Series(list(x)))
   dx['X'] = temp[0]
   dx['Y'] = temp[1]
