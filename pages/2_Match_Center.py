@@ -133,7 +133,7 @@ else:
         visa = vizone(viza,atp)
       st.pyplot(visa)
     elif (viza=='Shots'):
-      plaa = st.selectbox('Select Player', pd.unique(xga[Player']), key='8')
+      plaa = st.selectbox('Select Player', pd.unique(xga['Player']), key='8')
       xga = xga[xga['Player']==plaa].reset_index(drop=True)
       all_plaa = st.checkbox('Select All Players', key='10')
       if all_plaa:
