@@ -9,6 +9,8 @@ from openpyxl import load_workbook
 from yattag import Doc, indent
 
 from fungsiplot import vizone
+from fungsiplot import tendangan
+from fungsiplot import ttendangan
 
 st.set_page_config(page_title='Match Center', layout='wide')
 st.markdown('# Match Center')
