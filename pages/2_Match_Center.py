@@ -32,14 +32,18 @@ if all_gws:
     team = st.selectbox('Select Team', pd.unique(df['Team']), key='3')
   col1, col2 = st.columns(2)
   with col1:
-    viz = st.selectbox('Select Visualization', ['Average Position','Heatmap','Shots','Passes Attempted',
+    viz = st.selectbox('Select Visualization', ['Heatmap','Shots','Passes Attempted','Average Position',
                                                 'Passes Received','Dribbles','Tackles','Intercepts',
                                                 'Recoveries','Fouls','Possessions Lost'], key='11')
   with col2:
     temp = df[df['Team']==team]
-    pla = st.selectbox('Select Player', pd.unique(temp['Act Name']), key='12')
+    if (viz=='Pass Received'):
+      pla = st.selectbox('Select Player', pd.unique(temp['Pas Name']), key='12')
+      templa = temp[temp['Pas Name']==pla].reset_index(drop=True)
+    else:
+      pla = st.selectbox('Select Player', pd.unique(temp['Act Name']), key='12')
+      templa = temp[temp['Act Name']==pla].reset_index(drop=True)
     all_pla = st.checkbox('Select All Players', key='13')
-    templa = temp[temp['Act Name']==pla].reset_index(drop=True)
   if all_pla:
     vis = vizone(viz,temp)
   else:
@@ -55,11 +59,15 @@ else:
   away = (temp['Match'].str.split('- ').str[1])[0]
   with col1:
     ht = temp[temp['Team']==home].reset_index(drop=True)
-    vizh = st.selectbox('Select Visualization', ['Average Position','Heatmap','Shots','Passes Attempted',
+    vizh = st.selectbox('Select Visualization', ['Heatmap','Shots','Passes Attempted','Average Position',
                                                  'Passes Received','Dribbles','Tackles','Intercepts',
                                                  'Recoveries','Fouls','Possessions Lost'], key='4')
-    plah = st.selectbox('Select Player', pd.unique(ht['Act Name']), key='6')
-    htp = temp[temp['Act Name']==plah].reset_index(drop=True)
+    if (vizh=='Pass Received'):
+      plah = st.selectbox('Select Player', pd.unique(ht['Pas Name']), key='6')
+      htp = temp[temp['Pas Name']==plah].reset_index(drop=True)
+    else:
+      plah = st.selectbox('Select Player', pd.unique(ht['Act Name']), key='6')
+      htp = temp[temp['Act Name']==plah].reset_index(drop=True)
     all_plah = st.checkbox('Select All Players', key='9')
     if all_plah:
       vish = vizone(vizh,ht)
@@ -70,11 +78,15 @@ else:
     st.write("hi")
   with col3:
     at = temp[temp['Team']==away].reset_index(drop=True)
-    viza = st.selectbox('Select Visualization', ['Average Position','Heatmap','Shots','Passes Attempted',
+    viza = st.selectbox('Select Visualization', ['Heatmap','Shots','Passes Attempted','Average Position',
                                                  'Passes Received','Dribbles','Tackles','Intercepts',
                                                  'Recoveries','Fouls','Possessions Lost'], key='7')
-    plaa = st.selectbox('Select Player', pd.unique(at['Act Name']), key='8')
-    atp = temp[temp['Act Name']==plaa].reset_index(drop=True)
+    if (viza=='Pass Received'):
+      plaa = st.selectbox('Select Player', pd.unique(at['Pas Name']), key='8')
+      atp = temp[temp['Pas Name']==plaa].reset_index(drop=True)
+    else:
+      plaa = st.selectbox('Select Player', pd.unique(at['Act Name']), key='8')
+      atp = temp[temp['Act Name']==plaa].reset_index(drop=True)
     all_plaa = st.checkbox('Select All Players', key='10')
     if all_plaa:
       visa = vizone(viza,at)
