@@ -21,6 +21,12 @@ for i in range(1,11):
   temp = pd.read_json('./data/'+str(i)+'.json')
   df = pd.concat([df, temp], ignore_index=True)
 
+@st.cache_data(ttl=600)
+def load_data(sheets_url):
+    xlsx_url = sheets_url.replace("/edit#gid=", "/export?format=xlsx&gid=")
+    return pd.read_excel(xlsx_url)
+dfxg = load_data(st.secrets["xgdata"])
+
 col1, col2, col3 = st.columns(3)
 with col1:
   komp = st.selectbox('Select Competition', ['Liga 1', 'Liga 2'], key='1')
