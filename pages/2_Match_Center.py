@@ -9,8 +9,8 @@ from openpyxl import load_workbook
 from yattag import Doc, indent
 
 from fungsiplot import vizone
-from fungsiplot import tendangan
-from fungsiplot import ttendangan
+from fungsiplot import tendang
+from fungsiplot import ttendang
 
 st.set_page_config(page_title='Match Center', layout='wide')
 st.markdown('# Match Center')
@@ -55,10 +55,10 @@ if all_gws:
     xgtemps = xgtemp[xgtemp['Player']==plah].reset_index(drop=True)
     all_pla = st.checkbox('Select All Players', key='13')
   if all_pla:
-    vxg = ttendangan(xgtemps)
+    vxg = ttendang(xgtemps)
     vis = vizone(viz,temp)
   else:
-    vxg = tendangan(xgtemps)
+    vxg = tendang(xgtemps)
     vis = vizone(viz,templa)
   if (viz=='Shots'):
     st.pyplot(vxg)
@@ -89,10 +89,10 @@ else:
     all_plah = st.checkbox('Select All Players', key='9')
     if all_plah:
       vish = vizone(vizh,ht)
-      vxgh = ttendangan(xgh)
+      vxgh = ttendang(xgh)
     else:
       vish = vizone(vizh,htp)
-      vxgh = tendangan(xgh)
+      vxgh = tendang(xgh)
     if (vizh=='Shots'):
       st.pyplot(vxgh)
     else:
@@ -115,10 +115,10 @@ else:
     all_plaa = st.checkbox('Select All Players', key='10')
     if all_plaa:
       visa = vizone(viza,at)
-      vxga = ttendangan(xga)
+      vxga = ttendang(xga)
     else:
       visa = vizone(viza,atp)
-      vxga = tendangan(xga)
+      vxga = tendang(xga)
     if (viza=='Shots'):
       st.pyplot(vxga)
     else
