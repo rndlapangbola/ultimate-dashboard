@@ -54,7 +54,6 @@ if all_gws:
         vis = vizone(viz,temp)
       else:
         vis = vizone(viz,templa)
-      st.pyplot(vis)
     elif (viz=='Shots'):
       pla = st.selectbox('Select Player', pd.unique(xgtemp['Player']), key='12')
       xgtemps = xgtemp[xgtemp['Player']==pla].reset_index(drop=True)
@@ -63,7 +62,6 @@ if all_gws:
         vxg = ttendang(xgtemps)
       else:
         vxg = tendang(xgtemps)
-      st.pyplot(vxg)
     else:
       pla = st.selectbox('Select Player', pd.unique(temp['Act Name']), key='12')
       templa = temp[temp['Act Name']==pla].reset_index(drop=True)
@@ -72,7 +70,10 @@ if all_gws:
         vis = vizone(viz,temp)
       else:
         vis = vizone(viz,templa)
-      st.pyplot(vis)
+  if (viz=='Shots'):
+    st.pyplot(vxg)
+  else:
+    st.pyplot(vis)
 else:
   with col3:
     temp = df[df['GW']==gw].reset_index(drop=True)
