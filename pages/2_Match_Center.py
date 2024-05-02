@@ -57,7 +57,7 @@ if all_gws:
       st.pyplot(vis)
     elif (viz=='Shots'):
       pla = st.selectbox('Select Player', pd.unique(xgtemp['Player']), key='12')
-      xgtemps = xgtemp[xgtemp['Player']==plah].reset_index(drop=True)
+      xgtemps = xgtemp[xgtemp['Player']==pla].reset_index(drop=True)
       all_pla = st.checkbox('Select All Players', key='13')
       if all_pla:
         vxg = ttendang(xgtemps)
