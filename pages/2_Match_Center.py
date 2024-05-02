@@ -45,25 +45,34 @@ if all_gws:
                                                 'Recoveries','Fouls','Possessions Lost'], key='11')
   with col2:
     temp = df[df['Team']==team]
-    xgtemp = dfxg[dfxg['Team']==home].reset_index(drop=True)
+    xgtemp = dfxg[dfxg['Team']==team].reset_index(drop=True)
     if (viz=='Passes Received'):
       pla = st.selectbox('Select Player', pd.unique(temp['Pas Name']), key='12')
       templa = temp[temp['Pas Name']==pla].reset_index(drop=True)
+      all_pla = st.checkbox('Select All Players', key='13')
+      if all_pla:
+        vis = vizone(viz,temp)
+      else:
+        vis = vizone(viz,templa)
+      st.pyplot(vis)
+    elif (viz=='Shots'):
+      pla = st.selectbox('Select Player', pd.unique(xgtemp['Player']), key='12')
+      xgtemps = xgtemp[xgtemp['Player']==plah].reset_index(drop=True)
+      all_pla = st.checkbox('Select All Players', key='13')
+      if all_pla:
+        vxg = ttendang(xgtemps)
+      else:
+        vxg = tendang(xgtemps)
+      st.pyplot(vxg)
     else:
       pla = st.selectbox('Select Player', pd.unique(temp['Act Name']), key='12')
       templa = temp[temp['Act Name']==pla].reset_index(drop=True)
-    xgtemps = xgtemp[xgtemp['Player']==plah].reset_index(drop=True)
-    all_pla = st.checkbox('Select All Players', key='13')
-  if all_pla:
-    vxg = ttendang(xgtemps)
-    vis = vizone(viz,temp)
-  else:
-    vxg = tendang(xgtemps)
-    vis = vizone(viz,templa)
-  if (viz=='Shots'):
-    st.pyplot(vxg)
-  else:
-    st.pyplot(vis)
+      all_pla = st.checkbox('Select All Players', key='13')
+      if all_pla:
+        vis = vizone(viz,temp)
+      else:
+        vis = vizone(viz,templa)
+      st.pyplot(vis)
 else:
   with col3:
     temp = df[df['GW']==gw].reset_index(drop=True)
@@ -82,20 +91,29 @@ else:
     if (vizh=='Passes Received'):
       plah = st.selectbox('Select Player', pd.unique(ht['Pas Name']), key='6')
       htp = temp[temp['Pas Name']==plah].reset_index(drop=True)
+      all_plah = st.checkbox('Select All Players', key='9')
+      if all_plah:
+        vish = vizone(vizh,ht)
+      else:
+        vish = vizone(vizh,htp)
+      st.pyplot(vish)
+    elif (vizh=='Shots'):
+      plah = st.selectbox('Select Player', pd.unique(xgh['Player']), key='6')
+      xgh = xgh[xgh['Player']==plah].reset_index(drop=True)
+      all_plah = st.checkbox('Select All Players', key='9')
+      if all_plah:
+        vxgh = ttendang(xgh)
+      else:
+        vxgh = tendang(xgh)
+      st.pyplot(vxgh)
     else:
       plah = st.selectbox('Select Player', pd.unique(ht['Act Name']), key='6')
       htp = temp[temp['Act Name']==plah].reset_index(drop=True)
-    xgh = xgh[xgh['Player']==plah].reset_index(drop=True)
-    all_plah = st.checkbox('Select All Players', key='9')
-    if all_plah:
-      vish = vizone(vizh,ht)
-      vxgh = ttendang(xgh)
-    else:
-      vish = vizone(vizh,htp)
-      vxgh = tendang(xgh)
-    if (vizh=='Shots'):
-      st.pyplot(vxgh)
-    else:
+      all_plah = st.checkbox('Select All Players', key='9')
+      if all_plah:
+        vish = vizone(vizh,ht)
+      else:
+        vish = vizone(vizh,htp)
       st.pyplot(vish)    
   with col2:
     st.write("hi")
@@ -108,20 +126,29 @@ else:
     if (viza=='Passes Received'):
       plaa = st.selectbox('Select Player', pd.unique(at['Pas Name']), key='8')
       atp = temp[temp['Pas Name']==plaa].reset_index(drop=True)
+      all_plaa = st.checkbox('Select All Players', key='10')
+      if all_plaa:
+        visa = vizone(viza,at)
+      else:
+        visa = vizone(viza,atp)
+      st.pyplot(visa)
+    elif (viza=='Shots'):
+      plaa = st.selectbox('Select Player', pd.unique(xga[Player']), key='8')
+      xga = xga[xga['Player']==plaa].reset_index(drop=True)
+      all_plaa = st.checkbox('Select All Players', key='10')
+      if all_plaa:
+        vxga = ttendang(xga)
+      else:
+        vxga = tendang(xga)
+      st.pyplot(vxga)
     else:
       plaa = st.selectbox('Select Player', pd.unique(at['Act Name']), key='8')
       atp = temp[temp['Act Name']==plaa].reset_index(drop=True)
-    xga = xga[xga['Player']==plaa].reset_index(drop=True)
-    all_plaa = st.checkbox('Select All Players', key='10')
-    if all_plaa:
-      visa = vizone(viza,at)
-      vxga = ttendang(xga)
-    else:
-      visa = vizone(viza,atp)
-      vxga = tendang(xga)
-    if (viza=='Shots'):
-      st.pyplot(vxga)
-    else:
+      all_plaa = st.checkbox('Select All Players', key='10')
+      if all_plaa:
+        visa = vizone(viza,at)
+      else:
+        visa = vizone(viza,atp)
       st.pyplot(visa)
     #st.write(temp[temp['Act Name']==pla].reset_index(drop=True))
     #st.image("./data/poster3.jpg")
