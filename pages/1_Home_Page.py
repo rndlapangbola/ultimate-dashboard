@@ -66,7 +66,6 @@ jkt = wts + timedelta(hours=7)
 wt = str(jkt.strftime("%X"))
 
 st.write('Last accessed by '+us+' on '+tg+' at '+wt+' WIB')
-st.write(df)
 
 from menu import menu
 menu()
