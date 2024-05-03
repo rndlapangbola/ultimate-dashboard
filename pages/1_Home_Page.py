@@ -49,7 +49,7 @@ conn = st.connection("supabase",type=SupabaseConnection)
 # Perform query.
 rows = conn.query("*", table="mytable", ttl="10m").execute()
 df = pd.DataFrame(rows.data)
-df = df[(df['name']!='admin') | (df['name']!='email') | (df['name']!='Prana')].reset_index(drop=True)
+df = df[(df['name']!='admin') & (df['name']!='email') & (df['name']!='Prana')].reset_index(drop=True)
 
 df['tanggal'] = pd.to_datetime(df['tanggal'])
 df['waktu'] = pd.to_datetime(df['waktu'])
