@@ -48,8 +48,8 @@ conn = st.connection("supabase",type=SupabaseConnection)
 
 # Perform query.
 rows = conn.query("*", table="mytable", ttl="10m").execute()
-df = pd.DataFrame(rows.data)
-df = df[(df['name']!='admin') & (df['name']!='email') & (df['name']!='Prana')].reset_index(drop=True)
+dfx = pd.DataFrame(rows.data)
+df = dfx[(dfx['name']!='admin') & (dfx['name']!='email') & (dfx['name']!='Prana')].reset_index(drop=True)
 
 df['tanggal'] = pd.to_datetime(df['tanggal'])
 df['waktu'] = pd.to_datetime(df['waktu'])
@@ -66,6 +66,7 @@ jkt = wts + timedelta(hours=7)
 wt = str(jkt.strftime("%X"))
 
 st.write('Last accessed by '+us+' on '+tg+' at '+wt+' WIB')
+st.write(df)
 
 from menu import menu
 menu()
