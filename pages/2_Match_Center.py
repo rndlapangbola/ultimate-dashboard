@@ -59,7 +59,7 @@ if all_gws:
       xgtemps = xgtemp[xgtemp['Player']==pla].reset_index(drop=True)
       all_pla = st.checkbox('Select All Players', key='13')
       if all_pla:
-        vxg = ttendang(xgtemps)
+        vxg = ttendang(xgtemp)
       else:
         vxg = tendang(xgtemps)
     else:
@@ -100,12 +100,12 @@ else:
       st.pyplot(vish)
     elif (vizh=='Shots'):
       plah = st.selectbox('Select Player', pd.unique(xgh['Player']), key='6')
-      xgh = xgh[xgh['Player']==plah].reset_index(drop=True)
+      xghp = xgh[xgh['Player']==plah].reset_index(drop=True)
       all_plah = st.checkbox('Select All Players', key='9')
       if all_plah:
         vxgh = ttendang(xgh)
       else:
-        vxgh = tendang(xgh)
+        vxgh = tendang(xghp)
       st.pyplot(vxgh)
     else:
       plah = st.selectbox('Select Player', pd.unique(ht['Act Name']), key='6')
@@ -135,12 +135,12 @@ else:
       st.pyplot(visa)
     elif (viza=='Shots'):
       plaa = st.selectbox('Select Player', pd.unique(xga['Player']), key='8')
-      xga = xga[xga['Player']==plaa].reset_index(drop=True)
+      xgap = xga[xga['Player']==plaa].reset_index(drop=True)
       all_plaa = st.checkbox('Select All Players', key='10')
       if all_plaa:
         vxga = ttendang(xga)
       else:
-        vxga = tendang(xga)
+        vxga = tendang(xgap)
       st.pyplot(vxga)
     else:
       plaa = st.selectbox('Select Player', pd.unique(at['Act Name']), key='8')
