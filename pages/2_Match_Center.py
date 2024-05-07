@@ -120,7 +120,7 @@ else:
     st.write("hi")
   with col3:
     at = temp[temp['Team']==away].reset_index(drop=True)
-    xga = xgtemp[xgtemp['Team']==home].reset_index(drop=True)
+    xga = xgtemp[xgtemp['Team']==away].reset_index(drop=True)
     viza = st.selectbox('Select Visualization', ['Heatmap','Shots','Passes Attempted','Average Position',
                                                  'Passes Received','Dribbles','Tackles','Intercepts',
                                                  'Recoveries','Fouls','Possessions Lost'], key='7')
