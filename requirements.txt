@@ -6,8 +6,8 @@ numpy
 scikit-learn
 statsmodels
 openpyxl
-yellowbrick==1.4
+yellowbrick == 1.4
 yattag
 xlsxwriter
-st-supabase-connection
+st-supabase-connection == 1.2.2
 streamlit_image_coordinates
