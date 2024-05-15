@@ -782,3 +782,89 @@ def ttendang(data):
              marker='o', edgecolors='#000000')
   
   return fig
+
+def fulxg(data, home, away):
+  fig, ax = plt.subplots(figsize=(20, 20), dpi=500)
+  fig.patch.set_facecolor('#ffffff')
+  ax.set_facecolor('#ffffff')
+
+  pitch = Pitch(pitch_type='wyscout', pitch_color='#ffffff', line_color='#000000', pad_bottom=13, pad_top=12,
+                corner_arcs=True, stripe=True, stripe_color='#fcf8f7', goal_type='box', linewidth=3.5)
+  pitch.draw(ax=ax)
+
+  hdata = data[data['Team']==home].reset_index(drop=True)
+  hgoal = hdata[hdata['Event']=='Goal']['Event'].count()
+  hxg = round((hdata['xG'].sum()),2)
+  hshot = hdata[hdata['Event']!='Goal']['Event'].count() + hgoal
+  hxgps = round((hxg/hshot),2)
+
+  adata = data[data['Team']==away].reset_index(drop=True)
+  agoal = adata[adata['Event']=='Goal']['Event'].count()
+  axg = round((adata['xG'].sum()),2)
+  ashot = adata[adata['Event']!='Goal']['Event'].count() + agoal
+  axgps = round((axg/ashot),2)
+
+  for i in range(len(data)):
+    if (data['Team'][i] == home):
+      data['X'] = 100-data['X']
+      data['Y'] = 100-data['Y']
+  for i in range(len(data)):
+    if (data['Event'][i] == 'Goal'):
+      ax.scatter(data['Y'][i], data['X'][i], s=data['xG'][i]*3000,
+                 c='#7ed957', marker='o', edgecolors='#000000', lw=3, zorder=10)
+    else:
+      ax.scatter(data['Y'][i], data['X'][i], s=data['xG'][i]*3000,
+                 c='#ffffff', marker='o', edgecolors='#000000', lw=3, zorder=10)
+      
+  annot_texts = ['Goals', 'Expected Goals (xG)', 'Shots', 'xG/Shot']
+  annot_y = [35 + y*9 for y in range(0,4)]
+  annot_stats_h = [hgoal, hxg, hshot, hxgps]
+  annot_stats_a = [agoal, axg, ashot, axgps]
+
+  for y, s, h, a in zip(annot_y, annot_texts, annot_stats_h, annot_stats_a):
+    ax.add_patch(FancyBboxPatch((37.5, y), 25, 5, fc='#000000', ec='#ffffff',
+                                alpha=0.15, boxstyle=patches.BoxStyle('Round', pad=1)))
+    ax.add_patch(FancyBboxPatch((32, y), 3, 5, fc='#000000', ec='#ffffff',
+                                alpha=0.15, boxstyle=patches.BoxStyle('Round', pad=1)))
+    ax.add_patch(FancyBboxPatch((65, y), 3, 5, fc='#000000', ec='#ffffff',
+                                alpha=0.15, boxstyle=patches.BoxStyle('Round', pad=1)))
+    ax.annotate(text=s, size=22, xy=(50,y), xytext=(0,-18),
+                textcoords='offset points', color='#000000', ha='center', fontproperties=bold,
+                zorder=9, va='center', path_effects=path_eff)
+    ax.annotate(text=h, size=22, xy=(33.5,y), xytext=(0,-18),
+                textcoords='offset points', color='#000000', ha='center', fontproperties=bold,
+                zorder=9, va='center', path_effects=path_eff)
+    ax.annotate(text=a, size=22, xy=(66.5,y), xytext=(0,-18),
+                textcoords='offset points', color='#000000', ha='center', fontproperties=bold,
+                zorder=9, va='center', path_effects=path_eff)
+
+  ax.scatter(32, 95, s=500, c='#ffffff', marker='o', ec='#000000', lw=3)
+  ax.text(34, 95, 'Shots', ha='left', fontproperties=bold, color='#000000', size='18', va='center')
+  ax.scatter(42, 95, s=500, c='#7ed957', marker='o', ec='#000000', lw=3)
+  ax.text(44, 95, 'Goals', ha='left', fontproperties=bold, color='#000000', size='18', va='center')
+
+  ax.text(52.5, 91, '-xG value->', ha='left', fontproperties=bold, color='#000000', size='18', va='center')
+  ax.scatter(53, 95, s=500, c='#ffffff', marker='o', ec='#000000', lw=3)
+  ax.scatter(57, 95, s=700, c='#ffffff', marker='o', ec='#000000', lw=3)
+  ax.scatter(61, 95, s=900, c='#ffffff', marker='o', ec='#000000', lw=3)
+
+  DC_to_FC = ax.transData.transform
+  FC_to_NFC = fig.transFigure.inverted().transform
+  DC_to_NFC = lambda x: FC_to_NFC(DC_to_FC(x))
+
+  ax_coords = DC_to_NFC([29.5, 28])
+  logo_ax = fig.add_axes([ax_coords[0], ax_coords[1], 0.055, 0.055], anchor = "C")
+  club_icon = Image.open('./data/logo/'+home+'.png')
+  logo_ax.imshow(club_icon)
+  logo_ax.axis("off")
+
+  ax_coords = DC_to_NFC([62.5, 28])
+  logo_ax = fig.add_axes([ax_coords[0], ax_coords[1], 0.055, 0.055], anchor = "C")
+  club_icon = Image.open('./data/logo/'+away+'.png')
+  logo_ax.imshow(club_icon)
+  logo_ax.axis("off")
+
+  ax.text(34, 22, team1.upper(), ha='center', fontproperties=bold, color='#000000', size='22', va='center')
+  ax.text(66, 22, team2.upper(), ha='center', fontproperties=bold, color='#000000', size='22', va='center')
+
+  return fig
