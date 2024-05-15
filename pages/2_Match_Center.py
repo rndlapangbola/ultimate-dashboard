@@ -117,7 +117,8 @@ else:
         vish = vizone(vizh,htp)
       st.pyplot(vish)    
   with col2:
-    st.write("hi")
+    xgtemp2 = xgtemp[(xgtemp['Team']==home) | (xgtemp['Team']==away)].reset_index(drop=True)
+    st.write(xgtemp2)
   with col3:
     at = temp[temp['Team']==away].reset_index(drop=True)
     xga = xgtemp[xgtemp['Team']==away].reset_index(drop=True)
