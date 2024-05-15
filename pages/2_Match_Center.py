@@ -11,6 +11,7 @@ from yattag import Doc, indent
 from fungsiplot import vizone
 from fungsiplot import tendang
 from fungsiplot import ttendang
+from fungsiplot import fulxg
 
 st.set_page_config(page_title='Match Center', layout='wide')
 st.markdown('# Match Center')
@@ -118,6 +119,8 @@ else:
       st.pyplot(vish)    
   with col2:
     xgtemp2 = xgtemp[(xgtemp['Team']==home) | (xgtemp['Team']==away)].reset_index(drop=True)
+    fuls = fulxg(xgtemp2,home,away)
+    st.pyplot(fuls)
     st.write(xgtemp2)
   with col3:
     at = temp[temp['Team']==away].reset_index(drop=True)
