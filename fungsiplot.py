@@ -857,13 +857,13 @@ def fulxg(data, home, away):
 
   ax_coords = DC_to_NFC([29.5, 28])
   logo_ax = fig.add_axes([ax_coords[0], ax_coords[1], 0.055, 0.055], anchor = "C")
-  club_icon = Image.open('/content/gdrive/MyDrive/Liga Indonesia 2022/Database/Badge/'+home+'.png')
+  club_icon = Image.open('./data/logo/'+home+'.png')
   logo_ax.imshow(club_icon)
   logo_ax.axis("off")
 
   ax_coords = DC_to_NFC([62.5, 28])
   logo_ax = fig.add_axes([ax_coords[0], ax_coords[1], 0.055, 0.055], anchor = "C")
-  club_icon = Image.open('/content/gdrive/MyDrive/Liga Indonesia 2022/Database/Badge/'+away+'.png')
+  club_icon = Image.open('./data/logo/'+away+'.png')
   logo_ax.imshow(club_icon)
   logo_ax.axis("off")
 
