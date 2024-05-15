@@ -80,10 +80,15 @@ else:
     temp = df[df['GW']==gw].reset_index(drop=True)
     xgtemp = dfxg[dfxg['GW']==gw].reset_index(drop=True)
     mat = st.selectbox('Select Match', pd.unique(temp['Match']), key='3')
-  col1, col2, col3 = st.columns(3)
+  col1, col2 = st.columns(2)
   temp = temp[temp['Match']==mat].reset_index(drop=True)
   home = (temp['Match'].str.split(' -').str[0])[0]
   away = (temp['Match'].str.split('- ').str[1])[0]
+
+  xgtemp2 = xgtemp[(xgtemp['Team']==home) | (xgtemp['Team']==away)].reset_index(drop=True)
+  fuls = fulxg(xgtemp2,home,away)
+  st.pyplot(fuls)
+  
   with col1:
     ht = temp[temp['Team']==home].reset_index(drop=True)
     xgh = xgtemp[xgtemp['Team']==home].reset_index(drop=True)
@@ -118,11 +123,6 @@ else:
         vish = vizone(vizh,htp)
       st.pyplot(vish)    
   with col2:
-    xgtemp2 = xgtemp[(xgtemp['Team']==home) | (xgtemp['Team']==away)].reset_index(drop=True)
-    fuls = fulxg(xgtemp2,home,away)
-    st.pyplot(fuls)
-    st.write(xgtemp2)
-  with col3:
     at = temp[temp['Team']==away].reset_index(drop=True)
     xga = xgtemp[xgtemp['Team']==away].reset_index(drop=True)
     viza = st.selectbox('Select Visualization', ['Heatmap','Shots','Passes Attempted','Average Position',
