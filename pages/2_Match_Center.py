@@ -86,7 +86,7 @@ else:
 
   xgtemp2 = xgtemp[(xgtemp['Team']==home) | (xgtemp['Team']==away)].reset_index(drop=True)
   fuls = fulxg(xgtemp2,home,away)
-  with st.expander('Open'):
+  with st.expander('**Match Statistics**'):
     st.pyplot(fuls)
 
   col1, col2 = st.columns(2)
