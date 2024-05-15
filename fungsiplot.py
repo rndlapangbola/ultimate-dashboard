@@ -813,10 +813,10 @@ def fulxg(data, home, away):
       data['Y'][i] = data['Y'][i]
   for i in range(len(data)):
     if (data['Event'][i] == 'Goal'):
-      ax.scatter(data['X'][i], data['Y'][i], s=data['xG'][i]*3000,
+      ax.scatter(data['X'][i], data['Y'][i], s=data['xG'][i]*5000,
                  c='#7ed957', marker='o', edgecolors='#000000', lw=3, zorder=10)
     else:
-      ax.scatter(data['X'][i], data['Y'][i], s=data['xG'][i]*3000,
+      ax.scatter(data['X'][i], data['Y'][i], s=data['xG'][i]*5000,
                  c='#ffffff', marker='o', edgecolors='#000000', lw=3, zorder=10)
       
   annot_texts = ['Goals', 'Expected Goals (xG)', 'Shots', 'xG/Shot']
