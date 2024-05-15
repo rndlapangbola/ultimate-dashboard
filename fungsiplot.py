@@ -864,7 +864,7 @@ def fulxg(data, home, away):
   logo_ax.imshow(club_icon)
   logo_ax.axis("off")
 
-  ax.text(34, 22, team1.upper(), ha='center', fontproperties=bold, color='#000000', size='22', va='center')
-  ax.text(66, 22, team2.upper(), ha='center', fontproperties=bold, color='#000000', size='22', va='center')
+  ax.text(34, 22, home.upper(), ha='center', fontproperties=bold, color='#000000', size='22', va='center')
+  ax.text(66, 22, away.upper(), ha='center', fontproperties=bold, color='#000000', size='22', va='center')
 
   return fig
