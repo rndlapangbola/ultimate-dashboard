@@ -806,8 +806,11 @@ def fulxg(data, home, away):
 
   for i in range(len(data)):
     if (data['Team'][i] == home):
-      data['X'] = 100-data['X']
-      data['Y'] = 100-data['Y']
+      data['X'][i] = 100-data['X'][i]
+      data['Y'][i] = 100-data['Y'][i]
+    else:
+      data['X'][i] = data['X'][i]
+      data['Y'][i] = data['Y'][i]
   for i in range(len(data)):
     if (data['Event'][i] == 'Goal'):
       ax.scatter(data['Y'][i], data['X'][i], s=data['xG'][i]*3000,
@@ -854,17 +857,17 @@ def fulxg(data, home, away):
 
   ax_coords = DC_to_NFC([29.5, 28])
   logo_ax = fig.add_axes([ax_coords[0], ax_coords[1], 0.055, 0.055], anchor = "C")
-  club_icon = Image.open('./data/logo/'+home+'.png')
+  club_icon = Image.open('/content/gdrive/MyDrive/Liga Indonesia 2022/Database/Badge/'+home+'.png')
   logo_ax.imshow(club_icon)
   logo_ax.axis("off")
 
   ax_coords = DC_to_NFC([62.5, 28])
   logo_ax = fig.add_axes([ax_coords[0], ax_coords[1], 0.055, 0.055], anchor = "C")
-  club_icon = Image.open('./data/logo/'+away+'.png')
+  club_icon = Image.open('/content/gdrive/MyDrive/Liga Indonesia 2022/Database/Badge/'+away+'.png')
   logo_ax.imshow(club_icon)
   logo_ax.axis("off")
 
-  ax.text(34, 22, home.upper(), ha='center', fontproperties=bold, color='#000000', size='22', va='center')
-  ax.text(66, 22, away.upper(), ha='center', fontproperties=bold, color='#000000', size='22', va='center')
+  ax.text(34, 25, home.upper(), ha='center', fontproperties=bold, color='#000000', size='22', va='center')
+  ax.text(66, 25, away.upper(), ha='center', fontproperties=bold, color='#000000', size='22', va='center')
 
   return fig
