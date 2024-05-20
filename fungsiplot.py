@@ -606,6 +606,8 @@ def vizone(kind, data):
       dx = df[(df['Action']=='foul')].reset_index(drop=True)
     elif (kind=='Possessions Lost'):
       dx = df[(df['Action']=='loose ball')].reset_index(drop=True)
+    elif (kind=='Defensive Actions'):
+      dx = df[(df['Action']=='tackle') | (df['Action']=='intercept') | (df['Action']=='recovery ball') | (df['Action']=='clearance')].reset_index(drop=True)
     elif (kind=='Heatmap'):
       dx = df.copy()
     dx = dx[['Act Name', 'Action', 'Team', 'Act Zone']]
