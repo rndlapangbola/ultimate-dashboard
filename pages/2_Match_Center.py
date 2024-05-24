@@ -20,7 +20,7 @@ from menu import menu
 menu()
 
 df = pd.DataFrame()
-for i in range(1,12):
+for i in range(1,13):
   temp = pd.read_json('./data/'+str(i)+'.json')
   df = pd.concat([df, temp], ignore_index=True)
 
