@@ -646,6 +646,8 @@ def tendang(data):
 
   goalp = df_player[df_player['Event']=='Goal']['Event'].count()
   shots = df_player[df_player['Event']!='Goal']['Event'].count() + goalp
+  player = (df_player['Player'].tolist())[0] #NEW
+  team = (df_player['Team'].tolist())[0] #NEW
   xgtotp = round((df_player['xG'].sum()),2)
   gps = round((goalp/shots)*100,1)
   xgps = round((xgtotp/shots),2)
@@ -694,6 +696,10 @@ def tendang(data):
     ax.annotate(text=s, size=24, xy=(x+2.5, 49), xytext=(0,-18),
                 textcoords='offset points', color='black', ha='left',
                 zorder=9, va='center', fontproperties=bold)
+  ax.add_patch(FancyBboxPatch((0.65, 50.5), 45, 1.35, fc='#cbfd06', ec='#cbfd06', lw=2))
+  ax.annotate(text=player+' - '+team, size=26, xy=(1, 52), xytext=(0,-18),
+              textcoords='offset points', color='black', ha='left',
+              zorder=9, va='center', fontproperties=bold)
 
   ax.annotate(text='-Nilai xG->', size=21, xy=(87, 54), xytext=(0,-18),
               textcoords='offset points', color='black', ha='left',
@@ -721,6 +727,7 @@ def ttendang(data):
   pitch.draw(ax=ax)
 
   goal = df_team[df_team['Event']=='Goal']['Event'].count()
+  team = (df_team['Team'].tolist())[0] #NEW
   son = df_team[df_team['Event']=='Shot On']['Event'].count()
   soff = df_team[df_team['Event']=='Shot Off']['Event'].count()
   sblocked = df_team[df_team['Event']=='Shot Blocked']['Event'].count()
@@ -770,6 +777,11 @@ def ttendang(data):
     ax.annotate(text=s, size=24, xy=(x+2.5, 49), xytext=(0,-18),
                 textcoords='offset points', color='black', ha='left',
                 zorder=9, va='center', fontproperties=bold)
+
+  ax.add_patch(FancyBboxPatch((0.65, 50.5), 35, 1.35, fc='#cbfd06', ec='#cbfd06', lw=2))
+  ax.annotate(text=team18, size=26, xy=(1, 52), xytext=(0,-18),
+              textcoords='offset points', color='black', ha='left',
+              zorder=9, va='center', fontproperties=bold) ##TEAM
 
   ax.annotate(text='-Nilai xGA->', size=21, xy=(87, 54), xytext=(0,-18),
               textcoords='offset points', color='black', ha='left',
