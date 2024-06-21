@@ -696,7 +696,7 @@ def tendang(data):
     ax.annotate(text=s, size=24, xy=(x+2.5, 49), xytext=(0,-18),
                 textcoords='offset points', color='black', ha='left',
                 zorder=9, va='center', fontproperties=bold)
-  ax.add_patch(FancyBboxPatch((0.65, 50.5), 45, 1.35, fc='#cbfd06', ec='#cbfd06', lw=2))
+  ax.add_patch(FancyBboxPatch((0.65, 50.5), 65, 1.35, fc='#cbfd06', ec='#cbfd06', lw=2))
   ax.annotate(text=player+' - '+team, size=26, xy=(1, 52), xytext=(0,-18),
               textcoords='offset points', color='black', ha='left',
               zorder=9, va='center', fontproperties=bold)
