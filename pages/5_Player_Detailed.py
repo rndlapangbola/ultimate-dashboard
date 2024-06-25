@@ -74,8 +74,8 @@ with col5:
     rdr['Percentile'] = rdr['Percentile']/100
     st.subheader(ply+' Scouting Report')
     st.caption('vs '+pos+' in '+komp+' | Min. '+str(mins)+' mins played')
-    #st.data_editor(rdr, column_config={'Percentile':st.column_config.ProgressColumn('Percentile',width='medium',min_value=0,max_value=1)},hide_index=True)
-    st.write(rdr)
+    st.data_editor(rdr, column_config={'Percentile':st.column_config.ProgressColumn('Percentile',width='medium',min_value=0,max_value=1)},hide_index=True)
+    #st.write(rdr)
         
 with col6:
     smr = get_simi(rank_p90,df2,ply,pos)
