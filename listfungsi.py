@@ -1088,7 +1088,7 @@ def get_pct(data, data2, min, komp):
   rank_liga = pd.concat([rank_cm, rank_gk, rank_fw, rank_cam, rank_cb, rank_fb, rank_w]).reset_index(drop=True)
   rank_liga['MoP'] = rank_liga['MoP'].astype(int)
 
-  return p90, df_sum, rank_liga
+  return data_full, df_sum, rank_liga
 
 def get_radar(data1, data2, data3, pos, player):
   df1 = data1.copy()
