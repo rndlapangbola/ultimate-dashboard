@@ -59,7 +59,7 @@ rank_tot = get_pct(df1, df2, mins, komp)[1]
 rank_pct = get_pct(df1, df2, mins, komp)[2]
 col2, col3, col4 = st.columns(3)
 with col2:
-    tempp = rank_p90[rank_p90['Kompetisi']==komp]
+    tempp = rank_pct[rank_pct['Kompetisi']==komp]
     klub = st.selectbox('Select Team', pd.unique(tempp['Team']), key='102')
 with col3:
     tempp = tempp[tempp['Team']==klub]
