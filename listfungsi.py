@@ -910,6 +910,7 @@ def get_pct(data, data2, min, komp):
                 'Penalty Save','Keeper - Sweeper','Cross Claim','Goal Kick',
                 'Goal Kick - Goal Kick Launch', 'Crosses']]
   df_sum = df_data.groupby(['Name','Team','Kompetisi'], as_index=False).sum()
+  df_sum = df_sum[df_sum['MoP']>=min].reset_index(drop=True)
   df_sum['Conversion Ratio'] = round(df_sum['Goals']/df_sum['Shots'],2)
   df_sum['Shot on Target Ratio'] = round(df_sum['Shot on']/df_sum['Shots'],2)
   df_sum['Successful Cross Ratio'] = round(df_sum['Cross']/df_sum['Crosses'],2)
@@ -943,7 +944,7 @@ def get_pct(data, data2, min, komp):
 
   pos = db[['Name','Position']]
   data_full = pd.merge(pos, p90, on='Name', how='left')
-  data_full = data_full.loc[(data_full['MoP']>=min)].reset_index(drop=True)
+  data_full = data_full[data_full['MoP']>=min].reset_index(drop=True)
 
   temp_full = data_full.copy()
   temp_full = temp_full[temp_full['Kompetisi']==komp]
@@ -1087,7 +1088,7 @@ def get_pct(data, data2, min, komp):
   rank_liga = pd.concat([rank_cm, rank_gk, rank_fw, rank_cam, rank_cb, rank_fb, rank_w]).reset_index(drop=True)
   rank_liga['MoP'] = rank_liga['MoP'].astype(int)
 
-  return data_full, df_sum, rank_liga
+  return p90, df_sum, rank_liga
 
 def get_radar(data1, data2, data3, pos, player):
   df1 = data1.copy()
