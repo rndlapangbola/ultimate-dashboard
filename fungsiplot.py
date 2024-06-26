@@ -747,7 +747,7 @@ def ttendang(data):
       ax.scatter(df_team['Y'][i], df_team['X'][i], s=df_team['xG'][i]*10000,
                  c='#e66009', marker='o', edgecolors='#000000', lw=3.5)
 
-  annot_texts = ['Goals\nConceded', 'Shots\nOn Target', 'Shots\nOff Target', 'Shots\nBlocked', 'xGA Total']
+  annot_texts = ['Goals\nScored', 'Shots\nOn Target', 'Shots\nOff Target', 'Shots\nBlocked', 'xG Total']
   annot_x = [10.83 + x*17.83 for x in range(0,5)]
   annot_stats = [goal, son, soff, sblocked, xgtot]
 
@@ -762,7 +762,7 @@ def ttendang(data):
   ax.add_patch(FancyBboxPatch((0, 45), 200, 4.5, fc='#ffffff', ec='#ffffff', lw=2))
 
   annot_x = [4 + x*25 for x in range(0,4)]
-  annot_texts = ['Goals Conceded', 'Shots On Target', 'Shots Off Target', 'Shots Blocked']
+  annot_texts = ['Goals Scored', 'Shots On Target', 'Shots Off Target', 'Shots Blocked']
 
   ax.scatter(4, 48, s=800, c='#7ed957', lw=3.5,
              marker='o', edgecolors='#000000')
