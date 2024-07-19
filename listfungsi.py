@@ -1405,5 +1405,7 @@ def cleandata(datax, tm):
 
   tempdata = data.reset_index(drop=True)
   fixdata = res_data(tempdata, datax)
+  fixdata['start'] = fixdata['start']+tm
+  fixdata['end'] = fixdata['end']+tm
 
   return fixdata
