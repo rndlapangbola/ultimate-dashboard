@@ -22,8 +22,10 @@ from listfungsi import converter
 with st.expander("CARA PAKAI."):
     st.write("1. Upload file timeline ke file uploader pertama; 2. Download as excel, upload excel ke file uploader kedua; 3. Download file XML")
     
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns(2)
 with col1:
+    bb = st.selectbox('Pilih babak.', ['Babak 1', 'Babak 2'])
+with col2:
     tl_data = st.file_uploader("Upload file timeline excel!")
     t1 = st.text_input('Video dimulai dari?')
     xt = converter(t1)
@@ -44,7 +46,7 @@ with col1:
     except ValueError:
         st.error("Please upload the timeline file")
 
-with col2:
+with col3:
     cl_data = st.file_uploader("Upload file clean-data.xlsx!")
     temp = pd.read_excel(cl_data)
     max = len(temp)
