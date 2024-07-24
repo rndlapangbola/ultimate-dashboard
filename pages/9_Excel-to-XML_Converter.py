@@ -22,7 +22,7 @@ from listfungsi import converter
 with st.expander("CARA PAKAI."):
     st.write("1. Upload file timeline ke file uploader pertama; 2. Download as excel, upload excel ke file uploader kedua; 3. Download file XML")
     
-col1, col2, col3 = st.columns(2)
+col1, col2, col3 = st.columns(3)
 with col1:
     bb = st.selectbox('Pilih babak.', ['Babak 1', 'Babak 2'])
 with col2:
