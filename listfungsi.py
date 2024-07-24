@@ -1389,7 +1389,7 @@ def res_data(data, datax):
 
   return test
 
-def cleandata(datax, tm):
+def cleandata(datax, tm, info):
   data = datax.copy()
   data = data[['Min', 'Num', 'Act Name', 'Team', 'Action']].reset_index()
   data = data[(data['Action']=='save') | (data['Action']=='penalty save') | (data['Action']=='goal') | (data['Action']=='penalty goal') | (data['Action']=='penalty missed') | (data['Action']=='own goal') | (data['Action']=='shoot on target') | (data['Action']=='shoot off target') | (data['Action']=='shoot blocked') | (data['Action']=='key pass') | (data['Action']=='assist')].reset_index(drop=True)
@@ -1407,5 +1407,8 @@ def cleandata(datax, tm):
   fixdata = res_data(tempdata, datax)
   fixdata['start'] = fixdata['start']+tm
   fixdata['end'] = fixdata['end']+tm
+  if (info=='Babak 2'):
+    fixdata['start'] = fixdata['start']-2700
+    fixdata['end'] = fixdata['end']-2700
 
   return fixdata
