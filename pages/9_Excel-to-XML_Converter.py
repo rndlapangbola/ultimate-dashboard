@@ -39,7 +39,7 @@ with col2:
         download = st.download_button(
             label="Download data as Excel",
             data=buffer.getvalue(),
-            file_name='clean-data.xlsx',
+            file_name='clean-data_'+bb+'.xlsx',
             mime='application/vnd.ms-excel',
             key = 0)
             
@@ -95,7 +95,7 @@ with col3:
             download1 = st.download_button(
                 label="Download XML data",
                 data=result,
-                file_name='xml-data.xml',
+                file_name='xml-data_'+bb+'.xml',
                 mime='text/csv')
 
     except ValueError:
