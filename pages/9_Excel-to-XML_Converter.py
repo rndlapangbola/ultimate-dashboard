@@ -17,6 +17,7 @@ menu()
 sys.path.append("listfungsi.py")
 from listfungsi import res_data
 from listfungsi import cleandata
+from listfungsi import cleandataver2
 from listfungsi import converter
 
 with st.expander("CARA PAKAI."):
