@@ -484,14 +484,14 @@ def plot_PN(data, min_pass, team, min_min, max_min, match, gw):
     if row.Count > min_pass:
       if abs(row.Y_end - row.Y) > abs(row.X_end - row.X):
         if row.Passer > row.Recipient:
-          x_shift, y_shift = 0, 2
+          x_shift, y_shift = -0.75, 0.75
         else:
-          x_shift, y_shift = 0, -2
+          x_shift, y_shift = 0.75, -0.75
       else:
         if row.Passer > row.Recipient:
-          x_shift, y_shift = 2, 0
+          x_shift, y_shift = 0.75, -0.75
         else:
-          x_shift, y_shift = -2, 0
+          x_shift, y_shift = -0.75, 0.75
 
       ax.plot([row.X_end+x_shift, row.X+x_shift],[row.Y_end+y_shift, row.Y+y_shift],
               color=cmap(row.passes_scaled), lw=3, alpha=row.passes_scaled)
