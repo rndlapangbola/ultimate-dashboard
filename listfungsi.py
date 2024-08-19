@@ -1412,3 +1412,27 @@ def cleandata(datax, tm, info):
     fixdata['end'] = fixdata['end']-2700
 
   return fixdata
+
+def cleandataver2(datax, tm, info):
+  data = datax.copy()
+  data = data[['Min', 'Num', 'Act Name', 'Team', 'Action']].reset_index()
+  data = data[(data['Action']=='miss big chance') | (data['Action']=='block') | (data['Action']=='goal') | (data['Action']=='tackle failed') | (data['Action']=='intercept failed') | (data['Action']=='cross') | (data['Action']=='cross failed') | (data['Action']=='tackle') | (data['Action']=='intercept') | (data['Action']=='clearance')].reset_index(drop=True)
+  data['Mins'] = data['Min'].str.split(':').str[0]
+  data['Mins_1'] = data['Mins'].str.split('+').str[0]
+  data['Mins_1'] = data['Mins_1'].astype(int)
+  data['Mins_2'] = data['Mins'].str.split('+').str[1]
+  data['Mins_2'] = data['Mins_2'].fillna(0)
+  data['Mins_2'] = data['Mins_2'].astype(int)
+  data['Mins'] = data['Mins_1']+data['Mins_2']
+  data['Secs'] = data['Min'].str.split(':').str[1]
+  data['Secs'] = data['Secs'].astype(int)
+
+  tempdata = data.reset_index(drop=True)
+  fixdata = res_data(tempdata, datax)
+  fixdata['start'] = fixdata['start']+tm
+  fixdata['end'] = fixdata['end']+tm
+  if (info=='Babak 2'):
+    fixdata['start'] = fixdata['start']-2700
+    fixdata['end'] = fixdata['end']-2700
+
+  return fixdata
