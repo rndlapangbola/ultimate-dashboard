@@ -12,7 +12,7 @@ import urllib
 
 from listfungsi import data_team
 from listfungsi import data_player
-from listfungsi import get_list
+from listfungsi import get_list2
 from listfungsi import get_detail
 from listfungsi import get_cs
 from listfungsi import milestone
@@ -32,7 +32,7 @@ df1['Month'] = df1['Date'].dt.strftime('%B')
 df22 = get_detail(df2)
 df = pd.merge(df1, df2.drop(['Name'], axis=1), on='Player ID', how='left')
 fulldata = get_detail(df)
-mlist = get_list(fulldata)
+mlist = get_list2(fulldata)
 
 from datetime import date
 date = date.today().strftime("%Y-%m-%d")
