@@ -13,8 +13,8 @@ from listfungsi import get_detail
 from listfungsi import get_cs
 from listfungsi import milestone
 
-st.set_page_config(page_title='Full Season Statistics', layout='wide')
-st.markdown('# Statistics')
+st.set_page_config(page_title='Temporary', layout='wide')
+st.markdown('# Temporary')
 
 @st.cache_data(ttl=600)
 def load_data(sheets_url):
