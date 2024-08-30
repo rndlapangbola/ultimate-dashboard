@@ -1580,7 +1580,7 @@ def cleandataver3(datax, tm, info):
   dfx = datax.copy()
   dfx = dfx[dfx['Act Zone'].notna()]
   dfx = dfx[dfx['Pas Zone'].notna()]
-  dfx = dfx[['Team','Act Name','Action', 'Min', 'Sub 1', 'Sub 3', 'Act Zone', 'Pas Zone']]
+  dfx = dfx[['Team','Act Name','Action', 'Min', 'Num', 'Sub 1', 'Sub 3', 'Act Zone', 'Pas Zone']]
   dfx = dfx[(dfx['Action']=='passing')].reset_index(drop=True)
   vv = dfx[dfx['Pas Zone'].str.contains("6B|6C|6D")]
   vv = vv[vv['Act Zone'].str.contains("1|2|3|4|5|6A|6E")].reset_index(drop=True)
