@@ -1567,3 +1567,45 @@ def cleandataver2(datax, tm, info):
     fixdata['end'] = fixdata['end']-2700
 
   return fixdata
+
+def cleandataver3(datax, tm, info):
+  data = datax.copy()
+
+  for i in range(len(data)):
+  if data['Sub 4'][i] == 'Progressive Pass':
+    data['Action'][i] = 'progressive pass'
+  elif data['Sub 4'][i] == 'Through Pass':
+    data['Action'][i] = 'through pass'
+
+  dfx = datax.copy()
+  dfx = dfx[dfx['Act Zone'].notna()]
+  dfx = dfx[dfx['Pas Zone'].notna()]
+  dfx = dfx[['Team','Act Name','Action', 'Min', 'Sub 1', 'Sub 3', 'Act Zone', 'Pas Zone']]
+  dfx = dfx[(dfx['Action']=='passing')].reset_index(drop=True)
+  vv = dfx[dfx['Pas Zone'].str.contains("6B|6C|6D")]
+  vv = vv[vv['Act Zone'].str.contains("1|2|3|4|5|6A|6E")].reset_index(drop=True)
+  vv = vv[['Min', 'Num', 'Act Name', 'Team', 'Action']].reset_index()
+  vv['Action'] = 'pass to box'
+  
+  data = data[['Min', 'Num', 'Act Name', 'Team', 'Action']].reset_index()
+  data = pd.concat([data,vv], ignore_index=True)
+  data = data[(data['Action']=='goal kick') | (data['Action']=='corner') | (data['Action']=='progressive pass') | (data['Action']=='through pass') | (data['Action']=='pass to box')].reset_index(drop=True)
+  data['Mins'] = data['Min'].str.split(':').str[0]
+  data['Mins_1'] = data['Mins'].str.split('+').str[0]
+  data['Mins_1'] = data['Mins_1'].astype(int)
+  data['Mins_2'] = data['Mins'].str.split('+').str[1]
+  data['Mins_2'] = data['Mins_2'].fillna(0)
+  data['Mins_2'] = data['Mins_2'].astype(int)
+  data['Mins'] = data['Mins_1']+data['Mins_2']
+  data['Secs'] = data['Min'].str.split(':').str[1]
+  data['Secs'] = data['Secs'].astype(int)
+
+  tempdata = data.reset_index(drop=True)
+  fixdata = res_data(tempdata, datax)
+  fixdata['start'] = fixdata['start']+tm
+  fixdata['end'] = fixdata['end']+tm
+  if (info=='Babak 2'):
+    fixdata['start'] = fixdata['start']-2700
+    fixdata['end'] = fixdata['end']-2700
+
+  return fixdata
