@@ -1572,10 +1572,10 @@ def cleandataver3(datax, tm, info):
   data = datax.copy()
 
   for i in range(len(data)):
-  if data['Sub 4'][i] == 'Progressive Pass':
-    data['Action'][i] = 'progressive pass'
-  elif data['Sub 4'][i] == 'Through Pass':
-    data['Action'][i] = 'through pass'
+    if data['Sub 4'][i] == 'Progressive Pass':
+      data['Action'][i] = 'progressive pass'
+    elif data['Sub 4'][i] == 'Through Pass':
+      data['Action'][i] = 'through pass'
 
   dfx = datax.copy()
   dfx = dfx[dfx['Act Zone'].notna()]
