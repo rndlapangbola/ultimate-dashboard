@@ -18,6 +18,7 @@ sys.path.append("listfungsi.py")
 from listfungsi import res_data
 from listfungsi import cleandata
 from listfungsi import cleandataver2
+from listfungsi import cleandataver3
 from listfungsi import converter
 
 with st.expander("CARA PAKAI."):
@@ -26,7 +27,7 @@ with st.expander("CARA PAKAI."):
 bb = st.selectbox('Pilih babak.', ['Babak 1', 'Babak 2'])
 col1, col2, col3= st.columns(3)
 with col1:
-    fase = st.selectbox('Select Level',['1 (Satu)', '2 (Dua)'], key='98')
+    fase = st.selectbox('Select Level',['1 (Satu)', '2 (Dua)', '3 (Tiga)'], key='98')
     
 with col2:
     tl_data = st.file_uploader("Upload file timeline excel!")
@@ -36,8 +37,10 @@ with col2:
         tl = pd.read_excel(tl_data, skiprows=[0])
         if (fase=='1 (Satu)'):
             c_data = cleandata(tl, xt, bb)
-        else:
+        elif (fase=='2 (Dua)'):
             c_data = cleandataver2(tl, xt, bb)
+        else:
+            c_data = cleandataver3(tl, xt, bb)
         
         buffer = io.BytesIO()
         with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
