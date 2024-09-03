@@ -1547,7 +1547,7 @@ def cleandata(datax, tm, info):
 def cleandataver2(datax, tm, info):
   data = datax.copy()
   data = data[['Min', 'Num', 'Act Name', 'Team', 'Action']].reset_index()
-  data = data[(data['Action']=='miss big chance') | (data['Action']=='block') | (data['Action']=='tackle failed') | (data['Action']=='intercept failed') | (data['Action']=='cross') | (data['Action']=='cross failed') | (data['Action']=='tackle') | (data['Action']=='intercept') | (data['Action']=='clearance')].reset_index(drop=True)
+  data = data[(data['Action']=='miss big chance') | (data['Action']=='block') | (data['Action']=='tackle failed') | (data['Action']=='cross') | (data['Action']=='cross failed') | (data['Action']=='tackle') | (data['Action']=='intercept') | (data['Action']=='clearance')].reset_index(drop=True)
   data['Mins'] = data['Min'].str.split(':').str[0]
   data['Mins_1'] = data['Mins'].str.split('+').str[0]
   data['Mins_1'] = data['Mins_1'].astype(int)
