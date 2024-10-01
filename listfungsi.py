@@ -600,7 +600,7 @@ def data_player2(data, komp, team, pos, month, venue, gw, age, nat, metrik, mins
   if (cat=='per 90'):
     return data90
   elif (cat=='Total'):
-    return dfx
+    return temp2
 
 def get_cs(data):
   df = data.copy()
