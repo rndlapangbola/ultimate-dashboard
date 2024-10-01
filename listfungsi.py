@@ -580,7 +580,7 @@ def data_player2(data, komp, team, pos, month, venue, gw, age, nat, metrik, mins
     return p90_value
     
   temp2 = df.drop(['Name', 'Team'], axis=1)
-  temp2 = temp2[temp2.columns[1:]]
+  temp2 = temp2[temp2['MoP'] > 0].reset_index(drop=True)
   p90 = temp2.apply(p90_Calculator)
   p90['Name'] = df['Name']
   p90['Team'] = df['Team']
@@ -601,7 +601,7 @@ def data_player2(data, komp, team, pos, month, venue, gw, age, nat, metrik, mins
   if (cat=='per 90'):
     return data90
   elif (cat=='Total'):
-    return temp2
+    return datafull
 
 def get_cs(data):
   df = data.copy()
