@@ -580,6 +580,7 @@ def data_player2(data, komp, team, pos, month, venue, gw, age, nat, metrik, mins
     return p90_value
     
   temp2 = df.drop(['Name', 'Team'], axis=1)
+  temp2 = temp2[temp2.columns[1:]]
   p90 = temp2.apply(p90_Calculator)
   p90['Name'] = df['Name']
   p90['Team'] = df['Team']
