@@ -598,7 +598,7 @@ def data_player2(data, komp, team, pos, month, venue, gw, age, nat, metrik, mins
   data90 = data90[mt_list]
 
   if (cat=='per 90'):
-    return temp
+    return data90
   elif (cat=='Total'):
     return datafull
 
