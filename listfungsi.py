@@ -578,9 +578,9 @@ def data_player2(data, komp, team, pos, month, venue, gw, age, nat, metrik, mins
   def p90_Calculator(variable_value):
     p90_value = round((((variable_value/df['MoP']))*90),2)
     return p90_value
-    
+
+  df = df[df['MoP'] > 0].reset_index(drop=True)
   temp2 = df.drop(['Name', 'Team'], axis=1)
-  temp2 = temp2[temp2['MoP'] > 0].reset_index(drop=True)
   p90 = temp2.apply(p90_Calculator)
   p90['Name'] = df['Name']
   p90['Team'] = df['Team']
