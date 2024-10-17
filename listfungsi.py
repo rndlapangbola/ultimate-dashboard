@@ -1590,7 +1590,7 @@ def cleandataver3(datax, tm, info):
   
   data = data[['Min', 'Num', 'Act Name', 'Team', 'Action']].reset_index()
   data = pd.concat([data,vv], ignore_index=True)
-  data = data[(data['Action']=='goal kick') | (data['Action']=='corner') | (data['Action']=='progressive pass') | (data['Action']=='through pass') | (data['Action']=='pass to box')].reset_index(drop=True)
+  data = data[(data['Action']=='free kick') | (data['Action']=='goal kick') | (data['Action']=='corner') | (data['Action']=='progressive pass') | (data['Action']=='through pass') | (data['Action']=='pass to box')].reset_index(drop=True)
   data['Mins'] = data['Min'].str.split(':').str[0]
   data['Mins_1'] = data['Mins'].str.split('+').str[0]
   data['Mins_1'] = data['Mins_1'].astype(int)
