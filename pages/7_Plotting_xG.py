@@ -378,6 +378,6 @@ with tab2:
     st.pyplot(fig)
     
     with open('pmap.jpg', 'rb') as img:
-        fn = 'PassesMap_'+filter+'.jpg'
+        fn = 'PassesMap_'+filter2+'.jpg'
         btn = st.download_button(label="Download Pass Map!", data=img,
                                  file_name=fn, mime="image/jpg", key=5)
