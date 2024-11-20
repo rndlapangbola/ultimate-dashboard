@@ -1610,3 +1610,61 @@ def cleandataver3(datax, tm, info):
     fixdata['end'] = fixdata['end']-2700
 
   return fixdata
+
+def wefektif(data):
+  df = data.copy()
+  dx = df.reset_index().sort_values(by='index', ascending=False)
+  dx = dx[['Act Name','Team','Match','Min','Action','Act Zone']]
+
+  test = dx.reset_index(drop=True)
+  test['Mins'] = test['Min'].str.split(':').str[0]
+  test['Mins_1'] = test['Mins'].str.split('+').str[0]
+  test['Mins_1'] = test['Mins_1'].astype(int)
+  test['Mins_2'] = test['Mins'].str.split('+').str[1]
+  test['Mins_2'] = test['Mins_2'].fillna(0)
+  test['Mins_2'] = test['Mins_2'].astype(int)
+  test['Mins'] = test['Mins_1']+test['Mins_2']
+  test['Secs'] = test['Min'].str.split(':').str[1]
+  test['Secs'] = test['Secs'].astype(int)
+  test['start'] = (test['Mins']*60)+test['Secs']
+
+  test = test[['Act Name','Team','Match','start','Action']]
+
+  used = ['tackle failed', 'create chance', 'assist', 'key pass', 'cross failed', 'cross',
+          'yellow card', 'red card', 'intercept failed', 'subs', 'cross blocked', 'header',
+          'header failed', 'offensive duel', 'defensive duel']
+  test = test[~test['Action'].isin(used)].reset_index(drop=True)
+
+  target_values = {'tackle', 'intercept', 'recovery ball', 'free kick', 'corner',
+                   'throw in', 'goal kick', 'fouled', 'foul', 'pass failed', 'loose ball'}
+
+  all_seqs = []
+  seq_id = 1
+
+  start = 0
+  for i in range(len(test)):
+    if test.loc[i, 'Team'] != test.loc[start, 'Team'] or test.loc[i, 'Action'] in target_values:
+      if start < i:
+        sequence = test.iloc[start:i].copy()
+        sequence['Seq_ID'] = seq_id
+        all_seqs.append(sequence)
+        seq_id += 1
+
+      start = i
+  if start < len(test):
+    sequence = test.iloc[start:].copy()
+    sequence['Seq_ID'] = seq_id
+    all_seqs.append(sequence)
+
+  result_df = pd.concat(all_seqs, ignore_index=True)
+  for i in range(len(result_df)):
+    if result_df.loc[i, 'Action'] == 'pass failed':
+      result_df.loc[i, 'Seq_ID'] = result_df.loc[i-1, 'Seq_ID']
+  abc = result_df[['Team','start','Seq_ID']]
+
+  def calculate_diff(group):
+    value_diffs = group.groupby('Seq_ID')['start'].apply(lambda x: x.max() - x.min())
+    return value_diffs.sum()
+  result = abc.groupby('Team').apply(calculate_diff).reset_index(name='Time')
+
+  return result, result_df
