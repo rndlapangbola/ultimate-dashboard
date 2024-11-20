@@ -15,14 +15,14 @@ from listfungsi import wefektif
 
 col1, col2 = st.columns(2)
 with col1:
-    tl_data_1 = st.file_uploader("Upload file timeline excel babak pertama!")
+    tl_data_1 = st.file_uploader("Upload file timeline excel babak pertama!", key=2)
     try:
         d1 = pd.read_excel(tl_data_1, skiprows=[0])
     except ValueError:
         st.error("Please upload the timeline file")
 
 with col2:
-    tl_data_2 = st.file_uploader("Upload file timeline excel babak pertama!")
+    tl_data_2 = st.file_uploader("Upload file timeline excel babak kedua!", key=3)
     try:
         d2 = pd.read_excel(tl_data_2, skiprows=[0])
     except ValueError:
