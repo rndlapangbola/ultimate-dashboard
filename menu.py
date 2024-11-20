@@ -11,7 +11,7 @@ def authenticated_menu():
     st.sidebar.page_link("pages/7_Plotting_xG.py", label="Plotting xG")
     st.sidebar.page_link("pages/8_Plotting_Passing_Network.py", label="Plotting Passing Network")
     st.sidebar.page_link("pages/9_Excel-to-XML_Converter.py", label="Excel-to-XML Converter")
-    st.sidebar.page_link("pages/10_Event_Tagger.py", label="Event Tagger")
+    st.sidebar.page_link("pages/10_Waktu_Efektif.py", label="Waktu Efektif")
     st.sidebar.page_link("pages/11_Plotting_Tool.py", label="Plotting Tool")
     st.sidebar.page_link("pages/12_Log_Out.py", label="Log Out")
 
