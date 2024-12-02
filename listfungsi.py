@@ -1658,7 +1658,7 @@ def wefektif(data):
 
   result_df = pd.concat(all_seqs, ignore_index=True)
   for i in range(len(result_df)):
-    if result_df.loc[i, 'Action'] == 'pass failed':
+    if result_df.loc[i, 'Action'] == 'pass failed' and i > 0:
       result_df.loc[i, 'Seq_ID'] = result_df.loc[i-1, 'Seq_ID']
   abc = result_df[['Team','start','Seq_ID']]
 
