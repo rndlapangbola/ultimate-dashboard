@@ -23,7 +23,7 @@ def load_data(sheets_url):
     return pd.read_excel(xlsx_url)
 
 df1 = load_data(st.secrets["newfull"])
-df2 = load_data(st.secrets["datapemain"])
+df2 = load_data(st.secrets["newpla"])
 histdata = load_data(st.secrets["hist"])
 
 from datetime import date
