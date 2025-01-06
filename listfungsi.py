@@ -557,7 +557,7 @@ def data_player2(data, komp, team, pos, month, venue, gw, age, nat, metrik, mins
            'Date','Result','Starter/Subs','Subs','Player Rating','Ball Possession','Pass Team','Kick In',
            'Fantasy Assist','Fantasy Assist - Penalty','Fantasy Assist - Free kick','Fantasy Assist - Goal by rebound',
            'Fantasy Assist - Own goal by pass/cross','Fantasy Assist - Own goal by rebound','Kompetisi',
-           'Month','Nickname','DoB','Position','Nationality','Nat. Status','Age Group','Age']
+           'Month','Nickname','DoB','Posisi','Negara','Position','Nationality','Nat. Status','Age Group','Age']
 
   df = df.drop(jatuh, axis=1)
   df = df.groupby(['Name','Team'], as_index=False).sum()
