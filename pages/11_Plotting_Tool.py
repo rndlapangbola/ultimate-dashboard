@@ -34,6 +34,8 @@ df = pd.merge(df1, df2.drop(['Name'], axis=1), on='Player ID', how='left')
 fulldata = get_detail(df)
 mlist = get_list2(fulldata)
 
+st.write(fulldata)
+
 from datetime import date
 date = date.today().strftime("%Y-%m-%d")
 
