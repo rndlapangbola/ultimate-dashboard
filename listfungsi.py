@@ -580,12 +580,10 @@ def data_player2(data, komp, team, pos, month, venue, gw, age, nat, metrik, mins
     return p90_value
 
   df = df[df['MoP'] > 0].reset_index(drop=True)
-  temp2 = df.drop(['Name', 'Team', 'Position', 'Nationality'], axis=1)
+  temp2 = df.drop(['Name', 'Team'], axis=1)
   p90 = temp2.apply(p90_Calculator)
   p90['Name'] = df['Name']
   p90['Team'] = df['Team']
-  p90['Position'] = df['Position']
-  p90['Nationality'] = df['Nationality']
   p90['MoP'] = df['MoP']
   p90['Conversion Ratio'] = df['Conversion Ratio']
   p90['Shot on Target Ratio'] = df['Shot on Target Ratio']
