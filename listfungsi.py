@@ -1615,6 +1615,7 @@ def wefektif(data):
   df = data.copy()
   dx = df.reset_index().sort_values(by='index', ascending=False)
   dx = dx[['Act Name','Team','Match','Min','Action','Act Zone']]
+  dx = dx[dx['Action']!='concede goal'].reset_index(drop=True)
 
   test = dx.reset_index(drop=True)
   test['Mins'] = test['Min'].str.split(':').str[0]
