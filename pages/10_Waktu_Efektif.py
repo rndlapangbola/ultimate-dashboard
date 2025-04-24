@@ -13,12 +13,14 @@ menu()
 sys.path.append("listfungsi.py")
 import listfungsi
 from listfungsi import wefektif
+from listfungsi import genmomentum
 
 col1, col2 = st.columns(2)
 with col1:
     tl_data_1 = st.file_uploader("Upload file timeline excel babak pertama!", key=2)
     try:
         d1 = pd.read_excel(tl_data_1, skiprows=[0])
+        mtch = d1['Match'].unique().tolist()[0]
     except ValueError:
         st.error("Please upload the timeline file")
 
@@ -65,6 +67,11 @@ with col2:
         mime='application/vnd.ms-excel',
         key = 1)
 
+mm = genmomentum(d1, d2)
+st.pyplot(mm)
+with open('pnet.jpg', 'rb') as img:
+    fn = 'Match Momentum '+mtch+'.jpg'
+    btn = st.download_button(label="Download Match Momentum", data=img, file_name=fn, mime="image/jpg")
 #if 'coor' not in st.session_state:
 #    st.session_state['coor'] = []
 
