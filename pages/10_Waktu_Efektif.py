@@ -4,6 +4,7 @@ from streamlit_image_coordinates import streamlit_image_coordinates
 import pandas as pd
 import io
 import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
 from highlight_text import HighlightText, ax_text, fig_text
 from PIL import Image
 from tempfile import NamedTemporaryFile
