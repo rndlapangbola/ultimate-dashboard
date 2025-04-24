@@ -19,6 +19,7 @@ from yellowbrick.cluster import KElbowVisualizer
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
+from PIL import Image
 
 posdict = {'gk':{'position':'Goalkeeper',
                  'metrics':['Name','Long Goal Kick Ratio','Pass Accuracy','Cross Claim',
