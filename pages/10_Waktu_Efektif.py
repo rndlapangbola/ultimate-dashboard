@@ -5,6 +5,11 @@ import pandas as pd
 import io
 import matplotlib.pyplot as plt
 from highlight_text import HighlightText, ax_text, fig_text
+from PIL import Image
+from tempfile import NamedTemporaryFile
+import urllib
+import os
+from textwrap import wrap # countries name lisibility
 
 github_url = 'https://github.com/google/fonts/blob/main/ofl/poppins/Poppins-Bold.ttf'
 url = github_url + '?raw=true'
