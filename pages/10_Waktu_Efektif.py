@@ -69,7 +69,7 @@ with col2:
 
 mm = genmomentum(d1, d2)
 st.pyplot(mm)
-with open('pnet.jpg', 'rb') as img:
+with open('Waktu Efektif.jpg', 'rb') as img:
     fn = 'Match Momentum '+mtch+'.jpg'
     btn = st.download_button(label="Download Match Momentum", data=img, file_name=fn, mime="image/jpg")
 #if 'coor' not in st.session_state:
