@@ -11,3 +11,4 @@ yattag
 xlsxwriter
 st-supabase-connection == 1.2.2
 streamlit_image_coordinates
+highlight-text
