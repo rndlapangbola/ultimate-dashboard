@@ -3,48 +3,6 @@ import streamlit as st
 from streamlit_image_coordinates import streamlit_image_coordinates
 import pandas as pd
 import io
-import matplotlib.pyplot as plt
-import matplotlib.font_manager as fm
-import matplotlib.patheffects as path_effects
-from highlight_text import HighlightText, ax_text, fig_text
-from PIL import Image
-from tempfile import NamedTemporaryFile
-import urllib
-import os
-from textwrap import wrap # countries name lisibility
-
-github_url = 'https://github.com/google/fonts/blob/main/ofl/poppins/Poppins-Bold.ttf'
-url = github_url + '?raw=true'
-
-response = urllib.request.urlopen(url)
-f = NamedTemporaryFile(delete=False, suffix='.ttf')
-f.write(response.read())
-f.close()
-
-bold = fm.FontProperties(fname=f.name)
-
-github_url = 'https://github.com/google/fonts/blob/main/ofl/poppins/Poppins-Regular.ttf'
-url = github_url + '?raw=true'
-
-response = urllib.request.urlopen(url)
-f = NamedTemporaryFile(delete=False, suffix='.ttf')
-f.write(response.read())
-f.close()
-
-reg = fm.FontProperties(fname=f.name)
-
-github_url = 'https://github.com/google/fonts/blob/main/ofl/poppins/Poppins-Italic.ttf'
-url = github_url + '?raw=true'
-
-response = urllib.request.urlopen(url)
-f = NamedTemporaryFile(delete=False, suffix='.ttf')
-f.write(response.read())
-f.close()
-
-ita = fm.FontProperties(fname=f.name)
-
-path_eff = [path_effects.Stroke(linewidth=2, foreground='#ffffff'),
-            path_effects.Normal()]
 
 st.set_page_config(page_title='Waktu Efektif', layout='centered')
 st.markdown('# Waktu Efektif')
