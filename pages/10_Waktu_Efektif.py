@@ -5,6 +5,7 @@ import pandas as pd
 import io
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
+import matplotlib.patheffects as path_effects
 from highlight_text import HighlightText, ax_text, fig_text
 from PIL import Image
 from tempfile import NamedTemporaryFile
