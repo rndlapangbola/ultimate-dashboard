@@ -1669,3 +1669,239 @@ def wefektif(data):
   result = abc.groupby('Team').apply(calculate_diff).reset_index(name='Time')
 
   return result, result_df
+
+def genmomentum(data1, data2):
+  df1 = data1.copy()
+  df2 = data2.copy()
+  df1['Babak'] = 'Satu'
+  df2['Babak'] = 'Dua'
+  df = pd.concat([df1, df2], ignore_index=True)
+  temp = df1.copy()
+  temp['Home'] = temp['Match'].str.split(' vs ').str[0]
+  temp['Away'] = temp['Match'].str.split(' vs ').str[1]
+  home = temp['Home'].unique().tolist()[0]
+  away = temp['Away'].unique().tolist()[0]
+  mtch = temp['Match'].unique().tolist()[0]
+  '''
+  df_match = df.copy()
+  df_match = df_match[['Team','Action','Min','Babak','X1','Y1','X2','Y2']]
+  df_match = df_match[(df_match['Action']=='passing')]
+  '''
+  df_match = df.copy()
+  df_match = df_match[['Team','Action','Min','Babak','Act Zone','Pas Zone']]
+  df_match = df_match[(df_match['Action']=='passing')]
+
+  #Cleaning Data
+  shots = df_match.copy()
+  shots['Mins'] = shots['Min'].str.split(' : ').str[0]
+  shots['Mins'].fillna(shots['Min'], inplace=True)
+  shots['Mins'] = shots['Mins'].astype(float)
+
+  aksi = df[(df['Action']=='own goal') | (df['Action']=='goal') | (df['Action']=='penalty goal') |
+            (df['Action']=='penalty missed') | (df['Action']=='yellow card') | (df['Action']=='red card') |
+            (df['Action']=='subs')].reset_index(drop=True)
+  for i in range(len(aksi)):
+    if (aksi['Sub 1'][i]=='Two Yellow Card') and (aksi['Action'][i]=='red card'):
+      aksi['Action'][i] = '2yellow'
+  aksi = aksi[['Team','Action','Min','Babak']]
+  aksi['Mins'] = aksi['Min'].str.split(' : ').str[0]
+  aksi['Mins'].fillna(aksi['Min'], inplace=True)
+  aksi['Mins'] = aksi['Mins'].astype(float)
+  aksi = aksi.drop(['Min'], axis=1)
+
+  dfy = shots.copy()
+  dfy = dfy[dfy['Act Zone'].notna()].reset_index(drop=True)
+  dfy = dfy[dfy['Pas Zone'].notna()].reset_index(drop=True)
+  dx = dfy[['Action', 'Team', 'Act Zone', 'Pas Zone','Mins','Babak']]
+  temp = dx['Act Zone'].apply(lambda x: pd.Series(list(x)))
+  dx['X1'] = temp[0]
+  dx['Y1'] = temp[1]
+  dx['Y1'] = dx['Y1'].replace({'A':10,'B':30,'C':50,'D':70,'E':90})
+  dx['X1'] = dx['X1'].replace({'1':8.34,'2':25.34,'3':42.34,
+                               '4':59.34,'5':76.34,'6':93.34})
+
+  temp = dx['Pas Zone'].apply(lambda x: pd.Series(list(x)))
+  dx['X2'] = temp[0]
+  dx['Y2'] = temp[1]
+  dx['Y2'] = dx['Y2'].replace({'A':10,'B':30,'C':50,'D':70,'E':90})
+  dx['X2'] = dx['X2'].replace({'1':8.34,'2':25.34,'3':42.34,
+                               '4':59.34,'5':76.34,'6':93.34})
+
+  dx = dx[['Team','Action','X1','Y1','X2','Y2','Mins','Babak']]
+
+  xT = pd.read_csv('./data/xT_Grid.csv', header=None)
+  xT = np.array(xT)
+  xT_rows, xT_cols = xT.shape
+
+  shots = dx.copy()
+  shots['x1_bin'] = pd.cut(shots['X1'].to_numpy(), bins=xT_cols, labels=False)
+  shots['y1_bin'] = pd.cut(shots['Y1'].to_numpy(), bins=xT_rows, labels=False)
+  shots['x2_bin'] = pd.cut(shots['X2'].to_numpy(), bins=xT_cols, labels=False)
+  shots['y2_bin'] = pd.cut(shots['Y2'].to_numpy(), bins=xT_rows, labels=False)
+
+  shots['start_zone_value'] = shots[['x1_bin', 'y1_bin']].apply(lambda x: xT[int(x[1])][int(x[0])] if not pd.isnull(x[0]) and not pd.isnull(x[1]) else None, axis=1)
+  shots['end_zone_value'] = shots[['x2_bin', 'y2_bin']].apply(lambda x: xT[int(x[1])][int(x[0])] if not pd.isnull(x[0]) and not pd.isnull(x[1]) else None, axis=1)
+  shots['xT'] = shots['end_zone_value'] - shots['start_zone_value']
+  shots = shots[['Team','xT','Mins','Babak']]
+  shots = shots.groupby(['Team','Babak','Mins']).sum().reset_index()
+
+  #######
+  ht = shots[shots['Babak']=='Satu'].reset_index(drop=True)
+  ft = shots[shots['Babak']=='Dua'].reset_index(drop=True)
+
+  data = [ht, ft]
+  babak = ['Satu', 'Dua']
+  momentum_df = pd.DataFrame()
+  for fh, i in zip(data, babak):
+    max_xT_per_minute = fh.groupby(['Team', 'Mins'])['xT'].max().reset_index()
+    minutes = sorted(fh['Mins'].unique())
+
+    HOME_TEAM = home
+    AWAY_TEAM = away
+    weighted_xT_sum = {HOME_TEAM: [], AWAY_TEAM: []}
+    momentum = []
+
+    window_size = 4
+    decay_rate = 0.25
+
+    for current_minute in minutes:
+      for team in weighted_xT_sum.keys():
+        recent_xT_values = max_xT_per_minute[(max_xT_per_minute['Team'] == team) &
+                                             (max_xT_per_minute['Mins'] <= current_minute) &
+                                             (max_xT_per_minute['Mins'] > current_minute - window_size)]
+
+        weights = np.exp(-decay_rate * (current_minute - recent_xT_values['Mins'].values))
+        weighted_sum = np.sum(weights * recent_xT_values['xT'].values)
+        weighted_xT_sum[team].append(weighted_sum)
+
+      momentum.append(weighted_xT_sum[HOME_TEAM][-1] - weighted_xT_sum[AWAY_TEAM][-1])
+
+    fh = pd.DataFrame({'minute': minutes,'momentum': momentum})
+    fh['Babak'] = i
+    momentum_df = pd.concat([momentum_df, fh], ignore_index=True)
+
+  ####
+  from scipy.ndimage import gaussian_filter1d
+  fig, axs = plt.subplots(nrows=1, ncols=2, figsize=(20, 10), dpi=500)
+  fig.subplots_adjust(wspace=0.05)
+  fig.patch.set_facecolor('#FFFFFF')
+  axs = axs.flatten()
+
+  m = [0, 15, 30, 45, 60, 75, 90]
+
+  for i in range(0,2):
+    axs[i].set_ylim(-0.3, 0.3)
+    axs[i].set_facecolor('#FFFFFF')
+    if i == 0:
+      auxdata = momentum_df[momentum_df['Babak']=='Satu'].reset_index(drop=True)
+      test = aksi[aksi['Babak']=='Satu'].reset_index(drop=True)
+      temp = test[test['Mins'].duplicated()==False].reset_index(drop=True)
+      d1 = test[test['Mins'].duplicated()==True].reset_index(drop=True)
+      d2 = d1[d1['Mins'].duplicated()==True].reset_index(drop=True)
+      d3 = d2[d2['Mins'].duplicated()==True].reset_index(drop=True)
+      d4 = d3[d3['Mins'].duplicated()==True].reset_index(drop=True)
+      rlim = auxdata['minute'].max()
+      axs[i].set_xticks(m[:4])
+      axs[i].set_xlim(0, rlim)
+
+      DC_to_FC = axs[0].transData.transform
+      FC_to_NFC = fig.transFigure.inverted().transform
+      DC_to_NFC = lambda x: FC_to_NFC(DC_to_FC(x))
+
+      kons = 7.9
+    else:
+      auxdata = momentum_df[momentum_df['Babak']=='Dua'].reset_index(drop=True)
+      test = aksi[aksi['Babak']=='Dua'].reset_index(drop=True)
+      temp = test[test['Mins'].duplicated()==False].reset_index(drop=True)
+      d1 = test[test['Mins'].duplicated()==True].reset_index(drop=True)
+      d2 = d1[d1['Mins'].duplicated()==True].reset_index(drop=True)
+      d3 = d2[d2['Mins'].duplicated()==True].reset_index(drop=True)
+      d4 = d3[d3['Mins'].duplicated()==True].reset_index(drop=True)
+      rlim = auxdata['minute'].max()
+      axs[i].set_xticks(m[-4:])
+      axs[i].set_xlim(45, rlim)
+
+      DC_to_FC = axs[1].transData.transform
+      FC_to_NFC = fig.transFigure.inverted().transform
+      DC_to_NFC = lambda x: FC_to_NFC(DC_to_FC(x))
+
+      kons = 8.1
+
+    auxdata['momentum_smooth'] = gaussian_filter1d(auxdata['momentum'], sigma=1)
+    for j in range(len(auxdata)):
+      if auxdata['momentum_smooth'][j] > 0:
+        axs[i].plot(auxdata['minute'][j], auxdata['momentum_smooth'][j], color='#15AF15')
+      else:
+        axs[i].plot(auxdata['minute'][j], auxdata['momentum_smooth'][j], color='#AF15AF')
+
+    axs[i].fill_between(auxdata['minute'], auxdata['momentum_smooth'], where=(auxdata['momentum_smooth'] > 0),
+                        color='#15AF15', alpha=0.5, interpolate=True)
+    axs[i].fill_between(auxdata['minute'], auxdata['momentum_smooth'], where=(auxdata['momentum_smooth'] < 0),
+                        color='#AF15AF', alpha=0.5, interpolate=True)
+    axs[i].axhline(0, color='#000000', linewidth=.5)
+
+    dupe = [temp, d1, d2, d3, d4]
+    nilai_yh = [0.23-0.035*i for i in range(5)]
+    nilai_ya = [-0.32+0.035*i for i in range(5)]
+    for x, zh, za in zip(dupe, nilai_yh, nilai_ya):
+      for j in range(len(x)):
+        if x['Team'][j] == home:
+          ymax = 0.945
+          y1 = zh
+          suf = '-H.png'
+        else:
+          ymax = 0.055
+          y1 = za
+          suf = '-A.png'
+
+        if x['Action'][j] == 'goal':
+          icon = './data/icon/Goal'+suf
+          axs[i].axvline(x['Mins'][j], color='#000000', lw=1, ymin=0.5, ymax=ymax, zorder=3, ls='--')
+        elif x['Action'][j] == 'yellow card':
+          icon = './data/icon/YC'+suf
+        elif x['Action'][j] == 'red card':
+          icon = './data/icon/RC'+suf
+        elif x['Action'][j] == '2yellow':
+          icon = './data/icon/2Y'+suf
+        elif x['Action'][j] == 'subs':
+          icon = './data/icon/Subs'+suf
+        elif x['Action'][j] == 'own goal':
+          icon = './data/icon/OG'+suf
+        elif x['Action'][j] == 'penalty goal':
+          icon = './data/icon/P'+suf
+        else:
+          icon = './data/icon/PM'+suf
+        ax_coords = DC_to_NFC([x['Mins'][j]-kons, y1])
+        logo_ax = fig.add_axes([ax_coords[0], ax_coords[1], 0.125, 0.125], anchor = "C")
+        club_icon = Image.open(icon)
+        logo_ax.imshow(club_icon)
+        logo_ax.axis('off')
+
+    for k in m:
+      axs[i].axvline(k, color='#000000', lw=2, ymin=-0.3, ymax=3, zorder=-2, ls='--', alpha=0.075)
+
+    axs[i].spines['top'].set_visible(False)
+    axs[i].spines['right'].set_visible(False)
+    axs[i].spines['bottom'].set_visible(False)
+    axs[i].spines['left'].set_visible(False)
+    axs[i].set_yticks([])
+    axs[i].xaxis.set_ticks_position('none')
+    axs[i].tick_params(axis='x', colors='#000000')
+
+    for tick in axs[i].get_xticklabels():
+      tick.set_fontproperties(reg)
+    axs[i].xaxis.set_tick_params(labelsize=15)
+
+  axs[0].set_title('FIRST HALF', fontproperties=bold, size=20, alpha=0.35)
+  axs[1].set_title('SECOND HALF', fontproperties=bold, size=20, alpha=0.35)
+  #fig.suptitle('MATCH MOMENTUM', fontproperties=bold, size=30)
+
+  fig.text(0.5, 0.025, 'Minute', ha='center', fontsize=18, fontproperties=bold)
+  fig.text(0.1, 0.5, 'Attacking Threat', va='center', ha='center', fontsize=18, fontproperties=bold, rotation=90)
+
+  fig_text(0.1, 1, '<'+home+'> vs <'+away+'>', fontproperties=bold, size=32,
+           highlight_textprops=[{'color':'#15AF15'}, {'color':'#AF15AF'}], color='#000000')
+  fig.text(0.1, 0.93, 'Match Momentum | Liga 1 2024/25', fontsize=22, fontproperties=reg)
+  fig.savefig('Match Momentum - '+mtch+'.jpg', dpi=500, bbox_inches='tight', facecolor=fig.get_facecolor(), edgecolor='none')
+
+  return fig
