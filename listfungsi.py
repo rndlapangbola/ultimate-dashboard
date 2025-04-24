@@ -1902,6 +1902,6 @@ def genmomentum(data1, data2):
   fig_text(0.1, 1, '<'+home+'> vs <'+away+'>', fontproperties=bold, size=32,
            highlight_textprops=[{'color':'#15AF15'}, {'color':'#AF15AF'}], color='#000000')
   fig.text(0.1, 0.93, 'Match Momentum | Liga 1 2024/25', fontsize=22, fontproperties=reg)
-  fig.savefig('Match Momentum - '+mtch+'.jpg', dpi=500, bbox_inches='tight', facecolor=fig.get_facecolor(), edgecolor='none')
+  fig.savefig('Match Momentum.jpg', dpi=500, bbox_inches='tight', facecolor=fig.get_facecolor(), edgecolor='none')
 
   return fig
