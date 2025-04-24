@@ -20,6 +20,7 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 from PIL import Image
+from highlight_text import HighlightText, ax_text, fig_text
 
 posdict = {'gk':{'position':'Goalkeeper',
                  'metrics':['Name','Long Goal Kick Ratio','Pass Accuracy','Cross Claim',
