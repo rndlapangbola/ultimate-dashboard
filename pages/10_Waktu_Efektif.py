@@ -46,10 +46,6 @@ ita = fm.FontProperties(fname=f.name)
 path_eff = [path_effects.Stroke(linewidth=2, foreground='#ffffff'),
             path_effects.Normal()]
 
-#mount to gdrive
-from google.colab import drive
-drive.mount('/content/gdrive', force_remount=True)
-
 st.set_page_config(page_title='Waktu Efektif', layout='centered')
 st.markdown('# Waktu Efektif')
 
