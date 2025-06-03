@@ -254,12 +254,13 @@ def add_conc(data):
 
   return df_clean
 
-def data_team(data, komp, month, gw, venue, cat):
+def data_team(data, komp, month, gw, venue, stage, cat):
   df = data.copy()
   df_og = data.copy()
   gw_list = gw
   vn_list = venue
   mn_list = month
+  stg_list = stage
 
   from datetime import date
   df['Date'] = pd.to_datetime(df.Date)
@@ -269,6 +270,7 @@ def data_team(data, komp, month, gw, venue, cat):
   df = df[df['Home/Away'].isin(vn_list)]
   df = df[df['Gameweek'].isin(gw_list)]
   df = df[df['Month'].isin(mn_list)]
+  df = df[df['Stage'].isin(stg_list)]
 
   dfog = add_og(df)
   dfconc = add_conc(df)
@@ -422,7 +424,7 @@ def get_list2(data):
            'Date','Result','Starter/Subs','Subs','Player Rating','Ball Possession','Pass Team','Kick In','DoB',
            'Fantasy Assist','Fantasy Assist - Penalty','Fantasy Assist - Free kick','Fantasy Assist - Goal by rebound',
            'Fantasy Assist - Own goal by pass/cross','Fantasy Assist - Own goal by rebound','Kompetisi','Nickname',
-           'DoB','Nat. Status','Age Group']
+           'DoB','Nat. Status','Age Group','Stage']
 
   df = df.drop(jatuh, axis=1)
   df['Conversion Ratio'] = round(df['Goals']/df['Shots'],2)
@@ -555,7 +557,7 @@ def data_player(data, komp, team, pos, month, venue, gw, age, nat, metrik, mins,
   elif (cat=='Total'):
     return datafull
 
-def data_player2(data, komp, team, pos, month, venue, gw, age, nat, metrik, mins, cat, data2):
+def data_player2(data, komp, team, pos, month, venue, gw, age, nat, metrik, mins, cat, stage, data2):
   df = data.copy()
   db = data2.copy()
   gw_list = gw
@@ -566,6 +568,7 @@ def data_player2(data, komp, team, pos, month, venue, gw, age, nat, metrik, mins
   ps_list = pos
   mt_list = metrik
   tm_list = team
+  stg_list = stage
 
   df = df[df['Kompetisi']==komp]
   df = df[df['Team'].isin(tm_list)]
@@ -575,6 +578,7 @@ def data_player2(data, komp, team, pos, month, venue, gw, age, nat, metrik, mins
   df = df[df['Age Group'].isin(ag_list)]
   df = df[df['Position'].isin(ps_list)]
   df = df[df['Nat. Status'].isin(nt_list)]
+  df = df[df['Stage'].isin(stg_list)]
 
   df['Shots'] = df['Shot on']+df['Shot off']+df['Shot Blocked']
   df['Goals'] = df['Penalty Goal']+df['Goal']
@@ -600,7 +604,7 @@ def data_player2(data, komp, team, pos, month, venue, gw, age, nat, metrik, mins
            'Date','Result','Starter/Subs','Subs','Player Rating','Ball Possession','Pass Team','Kick In',
            'Fantasy Assist','Fantasy Assist - Penalty','Fantasy Assist - Free kick','Fantasy Assist - Goal by rebound',
            'Fantasy Assist - Own goal by pass/cross','Fantasy Assist - Own goal by rebound','Kompetisi',
-           'Month','Nickname','DoB','Posisi','Negara','Position','Nationality','Nat. Status','Age Group','Age']
+           'Month','Nickname','DoB','Posisi','Negara','Position','Nationality','Nat. Status','Age Group','Age','Stage']
 
   df = df.drop(jatuh, axis=1)
   df = df.groupby(['Name','Team'], as_index=False).sum()
