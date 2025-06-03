@@ -42,7 +42,7 @@ date = date.today().strftime("%Y-%m-%d")
 teams, players = st.tabs(['Team Stats', 'Player Stats'])
 
 with teams:
-    col1, col2, col3, col4, col5 = st.columns(5)
+    col1, col2, col3, col4, col5, col6 = st.columns(6)
     with col1:
         komp = st.selectbox('Select Competition', ['Liga 1', 'Liga 2'], key='3')
     with col2:
@@ -56,13 +56,16 @@ with teams:
         venue = st.multiselect('Select Venue', pd.unique(temp_full['Home/Away']), key='5')
     with col4:
         temp_full = temp_full[temp_full['Home/Away'].isin(venue)]
+        stage = st.multiselect('Select Stage', pd.unique(temp_full['Stage']), key='408')
+    with col5:
+        temp_full = temp_full[temp_full['Stage'].isin(stage)]
         gw = st.multiselect('Select Gameweek', pd.unique(temp_full['Gameweek']), key='4')
         all_gws = st.checkbox('Select All GWs', key='302')
         if all_gws:
             gw = pd.unique(temp_full['Gameweek'])
-    with col5:
+    with col6:
         cat = st.selectbox('Select Category', ['Goal Threat', 'in Possession', 'out of Possession', 'Misc'], key='13')
-    show_tim_data = data_team(fulldata, komp, month, gw, venue, cat)
+    show_tim_data = data_team(fulldata, komp, month, gw, venue, stage, cat)
     buffer = io.BytesIO()
     with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
         show_tim_data.to_excel(writer, sheet_name='Sheet1', index=False)
