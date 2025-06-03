@@ -22,7 +22,9 @@ def load_data(sheets_url):
     xlsx_url = sheets_url.replace("/edit#gid=", "/export?format=xlsx&gid=")
     return pd.read_excel(xlsx_url)
 
+sigh = load_data(st.secrets["tempfull"])
 df1 = load_data(st.secrets["newfull"])
+df1 = pd.concat([sigh, df1], ignore_index=True)
 df2 = load_data(st.secrets["newpla"])
 histdata = load_data(st.secrets["hist"])
 
