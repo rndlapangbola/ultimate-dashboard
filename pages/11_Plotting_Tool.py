@@ -101,8 +101,10 @@ with players:
         all_mos = st.checkbox('Select All Months', key='305')
         if all_mos:
             month = pd.unique(temp_pull['Month'])
-    with col4:
         temp_pull = temp_pull[temp_pull['Month'].isin(month)]
+        stage = st.multiselect('Select Stage', pd.unique(temp_pull['Stage']), key='127')
+    with col4:
+        temp_pull = temp_pull[temp_pull['Stage'].isin(stage)]
         venue = st.multiselect('Select Venue', pd.unique(temp_pull['Home/Away']), key='9')
         temp_pull = temp_pull[temp_pull['Home/Away'].isin(venue)]
         gw = st.multiselect('Select Gameweek', pd.unique(temp_pull['Gameweek']), key='17')
@@ -115,7 +117,7 @@ with players:
         metrik = st.multiselect('Select Metrics', mlist, key='19')
     cat = st.selectbox('Select Category', ['Total', 'per 90'], key='16')
     show_player_data = data_player2(fulldata, komp, team, pos, month, venue,
-                                    gw, age, nat, metrik, mins, cat, df22)
+                                    gw, age, nat, metrik, mins, cat, stage, df22)
 
     buffer = io.BytesIO()
     with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
