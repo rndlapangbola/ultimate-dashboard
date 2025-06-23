@@ -3,7 +3,7 @@ pandas
 mplsoccer
 matplotlib == 3.7.2
 numpy == 1.26.4
-scikit-learn == 1.6.1
+scikit-learn == 1.6.0
 statsmodels
 openpyxl
 yellowbrick == 1.4
