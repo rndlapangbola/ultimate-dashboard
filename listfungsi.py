@@ -19,6 +19,7 @@ from yellowbrick.cluster import KElbowVisualizer
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
+from mplsoccer import Pitch, VerticalPitch, PyPizza, Radar, grid
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 import matplotlib.patheffects as path_effects
