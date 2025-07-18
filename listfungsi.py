@@ -1952,3 +1952,38 @@ def genmomentum(data1, data2):
   fig.savefig('Match Momentum.jpg', dpi=500, bbox_inches='tight', facecolor=fig.get_facecolor(), edgecolor='none')
 
   return fig
+
+def pass3rd(data1, data2, player):
+  df1 = data1.copy()
+  df2 = data2.copy()
+  df = pd.concat([df1, df2], axis=0).reset_index(drop=True)
+
+  dfx = df[df['Action']=='passing'].reset_index(drop=True)
+  dfx = dfx[dfx['Team']=='Indonesia U23'].reset_index(drop=True)
+  dfx['Ket.'] = 'basic'
+
+  condition = (dfx['Pas Zone'].str.contains("5|6", na=False)) & (dfx['Act Zone'].str.contains("1|2|3|4", na=False))
+  dfx.loc[condition, 'Ket.'] = '3rd'
+
+  dfx = dfx[['Act Name','Action','X1','Y1','X2','Y2','Ket.']]
+
+  fig, ax = plt.subplots(figsize=(20, 20), dpi=500)
+  fig.patch.set_facecolor('#FFFFFF')
+  ax.set_facecolor('#FFFFFF')
+  pitch = Pitch(pitch_type='wyscout', pitch_color='#FFFFFF', line_color='grey',
+              corner_arcs=True, goal_type='circle', linewidth=1.5, pad_bottom=5)
+  pitch.draw(ax=ax)
+
+  dfx = dfx[dfx['Act Name']==player].reset_index(drop=True)
+  for i in range(len(dfx)):
+    if dfx['Ket.'][i] == 'basic':
+      pitch.arrows(dfx['X1'][i], dfx['Y1'][i], dfx['X2'][i], dfx['Y2'][i], alpha=0.05,
+                   width=2, headwidth=5, headlength=5, color='#000000', ax=ax)
+    else:
+      pitch.arrows(dfx['X1'][i], dfx['Y1'][i], dfx['X2'][i], dfx['Y2'][i],
+                   width=2, headwidth=5, headlength=5, color='#15AF15', ax=ax)
+
+  ax.vlines(66.7, 0, 100, ls='--', lw=1.5, color='grey')
+  fig.savefig('Pass3rd.jpg', dpi=500, bbox_inches='tight', facecolor=fig.get_facecolor(), edgecolor='none')
+
+  return fig
