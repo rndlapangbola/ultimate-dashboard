@@ -14,6 +14,7 @@ sys.path.append("listfungsi.py")
 import listfungsi
 from listfungsi import wefektif
 from listfungsi import genmomentum
+from listfungsi import pass3rd
 
 col1, col2 = st.columns(2)
 with col1:
@@ -71,6 +72,14 @@ mm = genmomentum(d1, d2)
 st.pyplot(mm)
 with open('Match Momentum.jpg', 'rb') as img:
     fn = 'Match Momentum '+mtch+'.jpg'
+    btn = st.download_button(label="Download Match Momentum", data=img, file_name=fn, mime="image/jpg")
+
+test = pd.concat([d1, d2], ignore_index=True)
+ply = st.selectbox('Select Player', pd.unique(test['Act Name']), key='12')
+p3 = pass3rd(d1, d2, ply)
+st.pyplot(p3)
+with open('Pass3rd.jpg', 'rb') as img:
+    fn = 'Pass3rd '+ply+'.jpg'
     btn = st.download_button(label="Download Match Momentum", data=img, file_name=fn, mime="image/jpg")
 #if 'coor' not in st.session_state:
 #    st.session_state['coor'] = []
