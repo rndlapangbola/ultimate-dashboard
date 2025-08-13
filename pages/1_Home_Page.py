@@ -1,5 +1,5 @@
 import streamlit as st
-from st_supabase_connection import SupabaseConnection
+#from st_supabase_connection import SupabaseConnection
 import pandas as pd
 from datetime import date, timedelta
 
@@ -40,7 +40,7 @@ def run():
 
 if __name__ == "__main__":
     run()
-
+'''
 st.markdown('### User counter:')
 
 # Initialize connection.
@@ -66,6 +66,6 @@ jkt = wts + timedelta(hours=7)
 wt = str(jkt.strftime("%X"))
 
 st.write('Last accessed by '+us+' on '+tg+' at '+wt+' WIB')
-
+'''
 from menu import menu
 menu()
