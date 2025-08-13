@@ -3,8 +3,8 @@ from menu import authenticated_menu, home_menu
 import openpyxl
 from openpyxl import load_workbook
 from datetime import datetime
-from st_supabase_connection import SupabaseConnection
-
+#from st_supabase_connection import SupabaseConnection
+'''
 conn = st.connection("supabase",type=SupabaseConnection)
 
 # Create an empty container
@@ -35,3 +35,4 @@ elif submit and password != actual_password:
     st.error("Login failed")
 else:
     pass
+'''
