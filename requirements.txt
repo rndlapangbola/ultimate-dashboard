@@ -1,7 +1,7 @@
 mplsoccer
 matplotlib == 3.7.2
 numpy == 1.26.4
-scikit-learn>=1.2
+scikit-learn
 statsmodels
 openpyxl
 yellowbrick == 1.4
@@ -9,4 +9,4 @@ yattag
 xlsxwriter
 st-supabase-connection == 1.2.2
 highlight-text
-scipy>=1.10.1
+scipy==1.10.1
