@@ -47,7 +47,7 @@ with coly:
 with colz:
     menit = st.slider('Select Minutes', 0, 91, (1, 30))
 with cola:
-    komp = st.selectbox('Select Competition', ['Liga 1 2024/25', 'Liga 2 2024/25', 'Piala Presiden 2024'])
+    komp = st.selectbox('Select Competition', ['Super League 2025/26', 'Championship 2025/26', 'Piala Presiden 2024'])
     gw = komp+' | GW '+str(mw)
         
 plotdata = get_PNdata(tl, rp, menit[0], menit[1], filter)
